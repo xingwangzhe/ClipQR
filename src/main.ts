@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import { Menu } from '@tauri-apps/api/menu';
-import './style.css'
 import App from './App.vue'
 import { TrayIcon } from '@tauri-apps/api/tray';
 import { platform } from '@tauri-apps/plugin-os';
@@ -21,7 +20,7 @@ if (currentPlatform === 'windows') {
   icon = '../src-tauri/icons/icon.ico';
 }
 
-const tray = await TrayIcon.new({
+await TrayIcon.new({
   icon: icon,
   menu,
   menuOnLeftClick: true,

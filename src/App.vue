@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import Desc from './components/Desc.vue'
+import HomeButton from './components/HomeButton.vue'
 </script>
 
 <template>
-  <HelloWorld />
+    <Desc />
+    <div style="width: 100%; height:200px "></div>
+    <HomeButton />
 </template>
