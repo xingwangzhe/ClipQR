@@ -40,7 +40,15 @@ jobs:
         id: meta
         run: |
           set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+            if [ -z "$TAG" ]; then
+              echo "❌ 手动触发需要输入 tag 名称"
+              exit 1
+            fi
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
           VERSION="$(echo "$TAG" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)"
           if [ -z "$VERSION" ]; then
             echo "❌ 无法从 tag 提取版本号: $TAG"
