@@ -7,7 +7,10 @@ import { readImage, readText } from '@tauri-apps/plugin-clipboard-manager';
 import { exit } from '@tauri-apps/plugin-process';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { invoke } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import './main.css';
+
+const appWindow = getCurrentWindow();
 createApp(App).mount('#app');
 
 // 保存托盘ID，防止创建多个托盘
@@ -52,6 +55,15 @@ export async function processQrContent(qrText: string | null) {
 
 const menu = await Menu.new({
   items: [
+    {
+      id: 'show_window',
+      text: '显示主窗口',
+      action: async () => {
+        await appWindow.show();
+        await appWindow.unminimize();
+        await appWindow.setFocus();
+      }
+    },
     {
       id: 'read_clipboard',
       text: '读取剪贴板二维码',

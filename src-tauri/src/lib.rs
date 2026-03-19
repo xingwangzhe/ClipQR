@@ -117,6 +117,16 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![decode_qr, decode_qr_from_file])
+        .on_window_event(|window, event| {
+            match event {
+                tauri::WindowEvent::CloseRequested { api, .. } => {
+                    // 关闭窗口不退出，只是隐藏
+                    window.hide().unwrap();
+                    api.prevent_close();
+                }
+                _ => {}
+            }
+        })
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
