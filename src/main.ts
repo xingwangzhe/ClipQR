@@ -10,6 +10,9 @@ import { invoke } from '@tauri-apps/api/core';
 import './main.css';
 createApp(App).mount('#app');
 
+// 保存托盘ID，防止创建多个托盘
+let existingTrayId: number | undefined;
+
 export async function processQrContent(qrText: string | null) {
   if (!qrText) {
     //   console.log('⚠️ 托盘: 未检测到二维码');
@@ -122,8 +125,15 @@ if (currentPlatform === 'windows') {
   icon = '../src-tauri/icons/icon.ico';
 }
 
-await TrayIcon.new({
+// 如果已经存在托盘，先移除它防止多托盘问题
+if (existingTrayId !== undefined) {
+  await TrayIcon.removeById(existingTrayId);
+}
+
+// 创建新托盘并保存ID
+const tray = await TrayIcon.new({
   icon: icon,
   menu,
   menuOnLeftClick: true,
 });
+existingTrayId = tray.id();
