@@ -27,14 +27,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { parseClipboardImage, copyToClipboard, processQrContent } from '../utils/qr';
+import { parseClipboardImage, copyToClipboard as copyToClipboardUtil, processQrContent } from '../utils/qr';
 
 const qrResult = ref<string | null>(null);
 const copied = ref(false);
 
 const copyToClipboard = async () => {
   if (!qrResult.value) return;
-  await copyToClipboard(qrResult.value);
+  await copyToClipboardUtil(qrResult.value);
   copied.value = true;
   setTimeout(() => {
     copied.value = false;

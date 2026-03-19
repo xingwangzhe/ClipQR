@@ -14,7 +14,7 @@ const appWindow = getCurrentWindow();
 createApp(App).mount('#app');
 
 // 保存托盘ID，防止创建多个托盘
-let existingTrayId: number | undefined;
+let existingTrayId: string | undefined;
 
 export async function processQrContent(qrText: string | null) {
   if (!qrText) {
@@ -148,4 +148,4 @@ const tray = await TrayIcon.new({
   menu,
   menuOnLeftClick: true,
 });
-existingTrayId = tray.id();
+existingTrayId = tray.id;

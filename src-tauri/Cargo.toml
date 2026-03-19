@@ -31,3 +31,15 @@ image = "0.25"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2"
+
+
+[profile.dev]
+incremental = true # 以较小的步骤编译二进制文件。
+
+# 最激进的发布构建优化
+[profile.release]
+opt-level = 3 # 最高级别优化（速度优先）
+lto = true # 启用全程序链接时优化
+codegen-units = 1 # 单代码单元，最大化优化效果
+panic = "abort" # 移除panic展开，减小二进制体积
+strip = "symbols" # 移除调试符号，进一步减小体积

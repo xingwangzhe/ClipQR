@@ -1,0 +1,125 @@
+name: "发布 ClipQR"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  validate-tag:
+    name: 校验 Tag 来源并提取版本
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 校验 Tag 指向 main 分支提交
+        run: |
+          set -euo pipefail
+          git fetch origin main --no-tags
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "❌ 当前 tag (${GITHUB_REF_NAME}) 对应提交不在 main 分支上"
+            exit 1
+          fi
+          echo "✅ Tag 来源校验通过"
+
+      - name: 提取版本信息
+        id: meta
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="$(echo "$TAG" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)"
+          if [ -z "$VERSION" ]; then
+            echo "❌ 无法从 tag 提取版本号: $TAG"
+            exit 1
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "✅ 发布版本: $VERSION"
+
+  publish-tauri:
+    name: 构建并发布桌面端
+    needs: validate-tag
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin"
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin"
+          - platform: "ubuntu-22.04"
+            args: ""
+            arch: "amd64"
+          - platform: "ubuntu-22.04-arm"
+            args: ""
+            arch: "arm64"
+          - platform: "windows-latest"
+            args: ""
+            arch: "amd64"
+          - platform: "windows-11-arm"
+            args: ""
+            arch: "arm64"
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装系统依赖 (Ubuntu 专用)
+        if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils nasm
+
+      - name: 安装 bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 安装 Rust 工具链 (默认目标)
+        if: ${{ matrix.args == '' }}
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 安装 Rust 工具链 (macOS 交叉编译)
+        if: ${{ matrix.args != '' }}
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: 缓存 Rust 编译产物
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: 安装前端依赖
+        run: |
+          bun install --frozen-lockfile
+
+      - name: 构建并发布
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ needs.validate-tag.outputs.tag }}
+          releaseName: "ClipQR v${{ needs.validate-tag.outputs.version }}"
+          releaseBody: |
+            ## ClipQR v${{ needs.validate-tag.outputs.version }}
+
+            剪贴板二维码自动识别工具，支持多平台。
+
+            自动发布构建产物。
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}

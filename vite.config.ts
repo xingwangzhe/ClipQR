@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [vue(), tailwindcss()],
   build: {
     minify: 'oxc',
-    cssMinify: true
+    cssMinify: true,
+    reportCompressedSize: false
   }
 })

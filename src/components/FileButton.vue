@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { open } from '@tauri-apps/plugin-dialog';
-import { parseFile, copyToClipboard, processQrContent } from '../utils/qr';
+import { parseFile, copyToClipboard as copyToClipboardUtil, processQrContent } from '../utils/qr';
 
 const qrResult = ref<string | null>(null);
 const copied = ref(false);
@@ -69,7 +69,7 @@ const handleFileSelect = async () => {
 
 const copyToClipboard = async () => {
   if (!qrResult.value) return;
-  await copyToClipboard(qrResult.value);
+  await copyToClipboardUtil(qrResult.value);
   copied.value = true;
   setTimeout(() => {
     copied.value = false;
