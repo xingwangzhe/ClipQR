@@ -6,13 +6,6 @@
     >
       选择文件
     </button>
-    <input
-      ref="fileInput"
-      type="file"
-      accept="image/*"
-      @change="handleFileChange"
-      class="hidden"
-    />
 
     <div
       v-if="qrResult"
@@ -34,37 +27,26 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { open } from '@tauri-apps/plugin-dialog';
 import { parseFile, copyToClipboard, processQrContent } from '../utils/qr';
 
-const fileInput = ref<HTMLInputElement | null>(null);
 const qrResult = ref<string | null>(null);
 const copied = ref(false);
 
-const handleFileSelect = () => {
-  fileInput.value?.click();
-};
-
-const copyToClipboard = async () => {
-  if (!qrResult.value) return;
-  await copyToClipboard(qrResult.value);
-  copied.value = true;
-  setTimeout(() => {
-    copied.value = false;
-  }, 2000);
-};
-
-const handleFileChange = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-
+const handleFileSelect = async () => {
   qrResult.value = null;
   copied.value = false;
 
-  const filePath = file.path;
+  const filePath = await open({
+    multiple: false,
+    filters: [{
+      name: '图片',
+      extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
+    }]
+  });
+
   if (!filePath) {
-    console.error('❌ 无法获取文件路径');
-    return;
+    return; // 用户取消选择
   }
 
   console.log('📄 选择本地文件:', filePath);
@@ -83,7 +65,14 @@ const handleFileChange = async (event: Event) => {
     console.error('❌ 解析失败:', e);
     qrResult.value = '解析失败: ' + e;
   }
+};
 
-  input.value = '';
+const copyToClipboard = async () => {
+  if (!qrResult.value) return;
+  await copyToClipboard(qrResult.value);
+  copied.value = true;
+  setTimeout(() => {
+    copied.value = false;
+  }, 2000);
 };
 </script>
