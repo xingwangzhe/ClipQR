@@ -36,14 +36,13 @@ fn decode_qr(rgba: Vec<u8>, width: u32, height: u32) -> Option<String> {
 fn is_image_file(path: &str, data: &[u8]) -> bool {
     // Check extension
     let lower = path.to_lowercase();
-    let has_image_ext =
-        lower.ends_with(".png") ||
-        lower.ends_with(".jpg") ||
-        lower.ends_with(".jpeg") ||
-        lower.ends_with(".gif") ||
-        lower.ends_with(".bmp") ||
-        lower.ends_with(".webp") ||
-        lower.ends_with(".ico");
+    let has_image_ext = lower.ends_with(".png")
+        || lower.ends_with(".jpg")
+        || lower.ends_with(".jpeg")
+        || lower.ends_with(".gif")
+        || lower.ends_with(".bmp")
+        || lower.ends_with(".webp")
+        || lower.ends_with(".ico");
 
     if !has_image_ext {
         return false;
@@ -110,6 +109,7 @@ fn decode_qr_from_file(path: String) -> Option<String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {}))
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_os::init())
