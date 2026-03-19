@@ -34,25 +34,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { invoke } from '@tauri-apps/api/core';
-import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { processQrContent } from '../main';
+import { parseFile, copyToClipboard, processQrContent } from '../utils/qr';
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const qrResult = ref<string | null>(null);
 const copied = ref(false);
 
+const handleFileSelect = () => {
+  fileInput.value?.click();
+};
+
 const copyToClipboard = async () => {
   if (!qrResult.value) return;
-  await writeText(qrResult.value);
+  await copyToClipboard(qrResult.value);
   copied.value = true;
   setTimeout(() => {
     copied.value = false;
   }, 2000);
-};
-
-const handleFileSelect = () => {
-  fileInput.value?.click();
 };
 
 const handleFileChange = async (event: Event) => {
@@ -63,7 +61,6 @@ const handleFileChange = async (event: Event) => {
   qrResult.value = null;
   copied.value = false;
 
-  // 获取文件的本地路径 (在 Tauri 环境中，webview 能拿到本地文件路径)
   const filePath = file.path;
   if (!filePath) {
     console.error('❌ 无法获取文件路径');
@@ -73,12 +70,10 @@ const handleFileChange = async (event: Event) => {
   console.log('📄 选择本地文件:', filePath);
 
   try {
-    // 使用后端解析
-    const result = await invoke<string | null>('decode_qr_from_file', { path: filePath });
+    const result = await parseFile(filePath);
     if (result) {
       qrResult.value = result;
       console.log('✅ 二维码识别成功:', result);
-      // 自动处理内容（如果是URL会自动打开）
       await processQrContent(result);
     } else {
       console.log('⚠️ 未检测到二维码');
@@ -89,7 +84,6 @@ const handleFileChange = async (event: Event) => {
     qrResult.value = '解析失败: ' + e;
   }
 
-  // 清空 input 以便重复选择同一个文件
   input.value = '';
 };
 </script>

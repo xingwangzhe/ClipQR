@@ -24,19 +24,17 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
-import { readImage } from '@tauri-apps/plugin-clipboard-manager';
 import { ref } from 'vue';
-import { invoke } from '@tauri-apps/api/core';
-import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { processQrContent } from '../main';
+import { parseClipboardImage, copyToClipboard, processQrContent } from '../utils/qr';
 
 const qrResult = ref<string | null>(null);
 const copied = ref(false);
 
 const copyToClipboard = async () => {
   if (!qrResult.value) return;
-  await writeText(qrResult.value);
+  await copyToClipboard(qrResult.value);
   copied.value = true;
   setTimeout(() => {
     copied.value = false;
@@ -49,39 +47,16 @@ const handleRead = async () => {
   copied.value = false;
 
   try {
-    // 1. readImage() 返回 Tauri Image 对象
-    const image = await readImage();
-    console.log('1. Image 对象:', image);
-
-    // 2. 从 Image 对象获取宽高和 RGBA 像素数据
-    const { width, height } = await image.size();
-    console.log('2. 图片尺寸:', width, 'x', height);
-
-    const rgbaData = await image.rgba();
-    console.log('3. RGBA 像素数据:', rgbaData, '长度:', rgbaData.length);
-
-    // 4. 使用后端 Rust 解析二维码
-    try {
-      const result = await invoke<string | null>('decode_qr', {
-        rgba: Array.from(rgbaData),
-        width,
-        height
-      });
-      qrResult.value = result;
-      console.log('✅ 二维码识别成功:', qrResult.value);
-      if (result) {
-        await processQrContent(result);
-      }
-    } catch (e) {
-      console.log('⚠️ 后端解析失败:', e);
-      qrResult.value = '解析失败: ' + e;
+    const result = await parseClipboardImage();
+    qrResult.value = result;
+    console.log('✅ 二维码识别成功:', qrResult.value);
+    if (result) {
+      await processQrContent(result);
     }
-
   } catch (e) {
     console.error('❌ 读取失败（剪贴板可能没有图片）:', e);
     qrResult.value = '读取失败，剪贴板中没有图片';
   }
   console.log('=== 读取结束 ===');
 };
-
 </script>
