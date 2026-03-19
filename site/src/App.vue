@@ -1,0 +1,500 @@
+<template>
+  <div class="app">
+    <!-- Hero 区域 -->
+    <header class="header">
+      <nav class="nav">
+        <div class="logo">
+          <span class="logo-icon">📱</span>
+          <span class="logo-text">ClipQR</span>
+        </div>
+        <a href="https://github.com/xingwangzhe/ClipQR" target="_blank" class="github-link">
+          <svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.17-.28-.15-.68-.52-.01-.46.31-.01.63.24.72.42.17.7.41 1.25 1.06.11.08.45.33.83.41-.11.35-.14.7-.24 1.14-.23.92.5 1.41.48 2.31 0 1.33-.13 2.32-.07 2.8-.09.17-.22.34-.48.47-.58.15.45.45.93.6 1.46 3.21-.33 5.52-2.71 5.52-7.52 0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+      </nav>
+
+      <div class="hero">
+        <div class="hero-content">
+          <h1 class="title">ClipQR</h1>
+          <p class="subtitle">快捷二维码解析工具</p>
+          <p class="description">
+            基于 Tauri + Vue 3 开发的跨平台桌面应用<br>
+            快速读取剪贴板和本地图片中的二维码内容
+          </p>
+          <div class="download-buttons">
+            <a href="https://github.com/xingwangzhe/ClipQR/releases" target="_blank" class="btn btn-primary">
+              立即下载
+            </a>
+            <a href="#features" class="btn btn-secondary">
+              了解更多
+            </a>
+          </div>
+        </div>
+        <!-- 主截图占位 -->
+        <div class="hero-image-placeholder">
+          <div class="placeholder-bg">
+            <span class="placeholder-text">应用截图占位</span>
+            <span class="placeholder-hint">替换此区域为产品展示图片</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 功能特性 -->
+    <section id="features" class="features">
+      <div class="container">
+        <h2 class="section-title">✨ 功能特性</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>剪贴板直读</h3>
+            <p>直接读取剪贴板中的图片，一键解析二维码</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📁</div>
+            <h3>本地文件</h3>
+            <p>支持从本地图片文件中解析二维码</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🖱️</div>
+            <h3>拖拽解析</h3>
+            <p>支持拖拽图片文件到窗口直接解析</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>快速响应</h3>
+            <p>使用 Rust 高性能解析，瞬间出结果</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📎</div>
+            <h3>一键复制</h3>
+            <p>点击即可复制解析结果到剪贴板</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h3>自动打开链接</h3>
+            <p>识别到 URL 自动打开浏览器</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 演示视频区域 -->
+    <section class="demo-section">
+      <div class="container">
+        <h2 class="section-title">🎬 演示视频</h2>
+        <!-- 视频占位 -->
+        <div class="video-placeholder">
+          <div class="video-placeholder-bg">
+            <span class="placeholder-text">演示视频占位</span>
+            <span class="placeholder-hint">替换此区域为使用演示视频</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 使用展示 -->
+    <section class="screenshots-section">
+      <div class="container">
+        <h2 class="section-title">🖼️ 功能展示</h2>
+        <div class="screenshots-grid">
+          <!-- 截图占位 1 -->
+          <div class="screenshot-placeholder">
+            <div class="placeholder-bg">
+              <span class="placeholder-text">功能截图 1</span>
+              <span class="placeholder-hint">剪贴板解析展示</span>
+            </div>
+          </div>
+          <!-- 截图占位 2 -->
+          <div class="screenshot-placeholder">
+            <div class="placeholder-bg">
+              <span class="placeholder-text">功能截图 2</span>
+              <span class="placeholder-hint">拖拽功能展示</span>
+            </div>
+          </div>
+          <!-- 截图占位 3 -->
+          <div class="screenshot-placeholder">
+            <div class="placeholder-bg">
+              <span class="placeholder-text">功能截图 3</span>
+              <span class="placeholder-hint">系统托盘展示</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 使用场景 -->
+    <section class="use-cases">
+      <div class="container">
+        <h2 class="section-title">🎯 使用场景</h2>
+        <ul class="use-cases-list">
+          <li>快捷解析截图中的二维码，无需打开手机</li>
+          <li>保存二维码图片后快速提取内容</li>
+          <li>开发过程中快速验证生成的二维码</li>
+          <li>提取文档或网页截图中的二维码信息</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 下载区域 -->
+    <section class="download-section">
+      <div class="container">
+        <h2 class="section-title">📥 立即下载</h2>
+        <p class="download-text">前往 GitHub Releases 页面下载对应平台的最新版本</p>
+        <div class="download-buttons-center">
+          <a href="https://github.com/xingwangzhe/ClipQR/releases" target="_blank" class="btn btn-primary large">
+            下载最新版本
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          <a href="https://github.com/xingwangzhe/ClipQR" target="_blank">GitHub</a> • MIT License
+        </p>
+        <p class="copyright">© 2025 ClipQR. Made with ❤️</p>
+      </div>
+    </footer>
+  </div>
+</template>
+
+<style scoped>
+.app {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #ffffff;
+}
+
+.header {
+  padding: 0;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.logo-icon {
+  font-size: 1.8rem;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.github-link:hover {
+  background: #1a1a1a;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+  align-items: center;
+}
+
+.hero-content {
+  text-align: left;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 0 0 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  color: #a0aec0;
+  margin: 0 0 1.5rem;
+  font-weight: normal;
+}
+
+.description {
+  font-size: 1.125rem;
+  color: #718096;
+  line-height: 1.8;
+  margin: 0 0 2.5rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-buttons-center {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.large {
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #1a1a1a;
+  color: white;
+  border: 1px solid #2d2d2d;
+}
+
+.btn-secondary:hover {
+  background: #2d2d2d;
+}
+
+.hero-image-placeholder {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.placeholder-bg {
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px dashed #4a4a4a;
+  border-radius: 12px;
+}
+
+.placeholder-text {
+  font-size: 1.25rem;
+  color: #a0aec0;
+  font-weight: 500;
+}
+
+.placeholder-hint {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.features {
+  padding: 6rem 0;
+  background: #0f0f0f;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  margin: 0 0 3rem;
+  color: #fff;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.feature-card {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.2s, background 0.2s;
+  border: 1px solid #2d2d2d;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  background: #202020;
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem;
+  color: #fff;
+}
+
+.feature-card p {
+  color: #718096;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.demo-section {
+  padding: 6rem 0;
+  background: #0a0a0a;
+}
+
+.video-placeholder {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.video-placeholder .placeholder-bg {
+  aspect-ratio: 16 / 9;
+}
+
+.screenshots-section {
+  padding: 6rem 0;
+  background: #0f0f0f;
+}
+
+.screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.screenshot-placeholder {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.screenshot-placeholder .placeholder-bg {
+  aspect-ratio: 16 / 9;
+}
+
+.use-cases {
+  padding: 6rem 0;
+  background: #0a0a0a;
+}
+
+.use-cases-list {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+}
+
+.use-cases-list li {
+  list-style: none;
+  padding: 1rem 1.5rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  color: #a0aec0;
+  font-size: 1.125rem;
+  border-left: 4px solid #667eea;
+}
+
+.download-section {
+  padding: 6rem 0;
+  background: #0f0f0f;
+}
+
+.download-text {
+  text-align: center;
+  color: #718096;
+  font-size: 1.125rem;
+  margin: 0 0 2.5rem;
+}
+
+.footer {
+  padding: 3rem 0;
+  background: #050505;
+  text-align: center;
+  color: #718096;
+}
+
+.footer a {
+  color: #a0aec0;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #667eea;
+}
+
+.copyright {
+  margin: 1rem 0 0;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 968px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .nav {
+    padding: 1rem;
+  }
+
+  .features,
+  .demo-section,
+  .screenshots-section,
+  .use-cases,
+  .download-section {
+    padding: 3rem 0;
+  }
+}
+</style>
