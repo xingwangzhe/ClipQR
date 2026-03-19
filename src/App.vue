@@ -1,49 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { listen } from '@tauri-apps/api/event'
 import Desc from './components/Desc.vue'
 import HomeButton from './components/HomeButton.vue'
-import { parseFile, copyToClipboard, processQrContent } from './utils/qr'
+import { copyToClipboard } from './utils/qr'
+import { initFileDrop } from './utils/drag'
 
 const isDragging = ref(false)
 const qrResult = ref<string | null>(null)
 const copied = ref(false)
 
-let unlistenDrop: (() => void) | undefined
-let unlistenEnter: (() => void) | undefined
-let unlistenLeave: (() => void) | undefined
-
-async function handleDrop(event: { payload: { paths: string[] } }) {
-  isDragging.value = false
-  const paths = event.payload.paths
-  if (paths.length === 0) return
-
-  const filePath = paths[0]
-  qrResult.value = null
-  copied.value = false
-
-  try {
-    console.log('📦 拖拽文件路径:', filePath);
-    const result = await parseFile(filePath);
-    if (result) {
-      qrResult.value = result
-      processQrContent(result)
-    } else {
-      qrResult.value = '未找到二维码'
-    }
-  } catch (e) {
-    console.error('解析失败:', e);
-    qrResult.value = '解析失败: ' + e;
-  }
-}
-
-function handleDragEnter() {
-  isDragging.value = true
-}
-
-function handleDragLeave() {
-  isDragging.value = false
-}
+let unlistens: Array<() => void> = []
 
 async function copyResult() {
   if (!qrResult.value) return
@@ -55,15 +21,22 @@ async function copyResult() {
 }
 
 onMounted(async () => {
-  unlistenDrop = await listen('tauri://drag-drop', handleDrop)
-  unlistenEnter = await listen('tauri://drag-enter', handleDragEnter)
-  unlistenLeave = await listen('tauri://drag-leave', handleDragLeave)
+  unlistens = await initFileDrop({
+    onResult: (result) => {
+      if (result) {
+        qrResult.value = result
+      } else {
+        qrResult.value = '未找到二维码'
+      }
+    },
+    onDragStateChange: (state) => {
+      isDragging.value = state
+    }
+  })
 })
 
 onUnmounted(() => {
-  unlistenDrop?.()
-  unlistenEnter?.()
-  unlistenLeave?.()
+  unlistens.forEach(unlisten => unlisten())
 })
 </script>
 
