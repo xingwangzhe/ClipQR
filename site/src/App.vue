@@ -243,13 +243,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
@@ -371,7 +371,7 @@
     border-radius: 8px;
     color: #a0aec0;
     font-size: 1.125rem;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #3b82f6;
 }
 
 .download-section {
@@ -399,7 +399,7 @@
 }
 
 .footer a:hover {
-    color: #667eea;
+    color: #3b82f6;
 }
 
 .copyright {
