@@ -9,7 +9,6 @@
     "core:default",
     "core:tray:default",
     "os:default",
-    "notification:default",
     "clipboard-manager:default",
     "clipboard-manager:allow-read-image"
   ]
