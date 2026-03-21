@@ -88,7 +88,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 安装系统依赖 (Ubuntu 专用)
         if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm'
