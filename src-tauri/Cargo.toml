@@ -1,6 +1,6 @@
 [package]
 name = "clipqr"
-version = "0.1.2"
+version = "0.1.3"
 description = "ClipQR - 快捷二维码解析工具"
 authors = ["xingwangzhe"]
 license = "MIT"

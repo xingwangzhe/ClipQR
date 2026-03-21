@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ClipQR",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "identifier": "icu.needhelp.clipqr",
   "build": {
     "frontendDist": "../dist",
@@ -33,6 +33,10 @@
       "icons/icon.icns",
       "icons/icon.ico",
       "icons/icon.png"
+    ],
+    "resources": [
+      "icons/icon.png",
+      "icons/icon.ico"
     ]
   }
 }

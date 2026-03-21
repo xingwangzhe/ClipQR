@@ -7,6 +7,7 @@ import { readImage, readText } from '@tauri-apps/plugin-clipboard-manager';
 import { exit } from '@tauri-apps/plugin-process';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { invoke } from '@tauri-apps/api/core';
+import { resolveResource } from '@tauri-apps/api/path';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import './main.css';
 
@@ -132,10 +133,12 @@ const menu = await Menu.new({
 
 const currentPlatform = platform();
 
-let icon = '../src-tauri/icons/icon.png'
+let iconPath = 'icons/icon.png';
 if (currentPlatform === 'windows') {
-  icon = '../src-tauri/icons/icon.ico';
+  iconPath = 'icons/icon.ico';
 }
+// 使用 resolveResource 获取打包后正确的资源路径
+const resolvedIconPath = await resolveResource(iconPath);
 
 // 如果已经存在托盘，先移除它防止多托盘问题
 if (existingTrayId !== undefined) {
@@ -144,7 +147,7 @@ if (existingTrayId !== undefined) {
 
 // 创建新托盘并保存ID
 const tray = await TrayIcon.new({
-  icon: icon,
+  icon: resolvedIconPath,
   menu,
   menuOnLeftClick: true,
 });
