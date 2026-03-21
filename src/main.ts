@@ -25,6 +25,15 @@ export async function processQrContent(qrText: string | null) {
   const trimmedText = qrText.trim();
   // console.log('✅ 托盘: 二维码识别成功:', trimmedText);
 
+  // 首先检查是否是本地绝对文件路径（Unix 绝对路径、Windows 绝对路径）
+  if (trimmedText.startsWith('/') || /^[A-Za-z]:[\\/]/.test(trimmedText)) {
+    // Unix 绝对路径 (/...) 或 Windows 绝对路径 (C:\... 或 C:/...)
+    // console.log('📄 读取本地图片文件:', trimmedText);
+    const fileQrText = await invoke<string | null>('decode_qr_from_file', { path: trimmedText });
+    await processQrContent(fileQrText);
+    return;
+  }
+
   // 尝试解析为 URL，支持所有协议 (http, https, mailto, tel, sms, geo, file 等)
   try {
     new URL(trimmedText);
@@ -37,7 +46,12 @@ export async function processQrContent(qrText: string | null) {
       const fileQrText = await invoke<string | null>('decode_qr_from_file', { path: filePath });
       await processQrContent(fileQrText);
     } else {
-      await openUrl(trimmedText);
+      // 单独捕获 openUrl 错误，避免 URL 验证通过但打开失败时完全不处理
+      try {
+        await openUrl(trimmedText);
+      } catch (e) {
+        // console.error('❌ 打开失败:', e);
+      }
     }
   } catch {
     // 如果 new URL() 解析失败，检查是否有协议头，也尝试打开

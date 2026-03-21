@@ -1,34 +1,70 @@
-use image::{ImageBuffer, Luma};
-use rqrr::PreparedImage;
+use image::{self, RgbaImage, GrayImage};
+use bardecoder;
 
 #[tauri::command]
 fn decode_qr(rgba: Vec<u8>, width: u32, height: u32) -> Option<String> {
-    // Convert RGBA to 8-bit grayscale for rqrr
-    let mut pixels = Vec::with_capacity((width * height) as usize);
-    for chunk in rgba.chunks(4) {
-        // RGBA -> luminance: 0.299*R + 0.587*G + 0.114*B
-        let r = chunk[0] as f32;
-        let g = chunk[1] as f32;
-        let b = chunk[2] as f32;
-        let gray = (0.299 * r + 0.587 * g + 0.114 * b) as u8;
-        pixels.push(gray);
-    }
+    // We already get RGBA from Tauri clipboard
+    let img = RgbaImage::from_raw(width, height, rgba)
+        .expect("Failed to create RGBA image buffer");
 
-    // Create grayscale image
-    let img_buffer = ImageBuffer::<Luma<u8>, Vec<u8>>::from_vec(width, height, pixels)
-        .expect("Failed to create image buffer");
-
-    // Prepare image for QR detection
-    let mut prepared = PreparedImage::prepare(img_buffer);
-    let grids = prepared.detect_grids();
-
-    // Try to decode each detected grid
-    for grid in grids {
-        if let Ok((_, content)) = grid.decode() {
+    // Try with bardecoder (zxing based, more accurate detection)
+    let decoder = bardecoder::default_decoder();
+    let results = decoder.decode(&img);
+    for result in results {
+        if let Ok(content) = result {
+            println!("✅ [后端] 二维码解析成功: {}", content);
             return Some(content);
         }
     }
 
+    // If failed, try inverted grayscale
+    // Convert to grayscale first
+    let mut gray_pixels = Vec::with_capacity((width * height) as usize);
+    for pixel in img.pixels() {
+        let r = pixel[0] as f32;
+        let g = pixel[1] as f32;
+        let b = pixel[2] as f32;
+        let gray = (0.299 * r + 0.587 * g + 0.114 * b) as u8;
+        gray_pixels.push(gray);
+    }
+    let gray_img = GrayImage::from_vec(width, height, gray_pixels.clone())
+        .expect("Failed to create gray image buffer");
+
+    // Try normal grayscale
+    // Convert back to RGBA for bardecoder (it expects RGBA)
+    let mut gray_rgba = RgbaImage::new(width, height);
+    for (x, y, pixel) in gray_img.enumerate_pixels() {
+        let g = pixel.0[0];
+        gray_rgba.put_pixel(x, y, image::Rgba([g, g, g, 255]));
+    }
+    let results = decoder.decode(&gray_rgba);
+    for result in results {
+        if let Ok(content) = result {
+            println!("✅ [后端] 灰度二维码解析成功: {}", content);
+            return Some(content);
+        }
+    }
+
+    // Try inverted grayscale (for dark background QR codes)
+    let inverted_gray: Vec<u8> = gray_pixels.iter().map(|&g| 255 - g).collect();
+    let inverted_gray_img = GrayImage::from_vec(width, height, inverted_gray)
+        .expect("Failed to create inverted image");
+
+    // Convert to RGBA
+    let mut inverted_gray_rgba = RgbaImage::new(width, height);
+    for (x, y, pixel) in inverted_gray_img.enumerate_pixels() {
+        let g = pixel.0[0];
+        inverted_gray_rgba.put_pixel(x, y, image::Rgba([g, g, g, 255]));
+    }
+    let results = decoder.decode(&inverted_gray_rgba);
+    for result in results {
+        if let Ok(content) = result {
+            println!("✅ [后端] 反转后二维码解析成功: {}", content);
+            return Some(content);
+        }
+    }
+
+    println!("⚠️ [后端] 未检测到二维码");
     None
 }
 
@@ -72,35 +108,70 @@ fn is_image_file(path: &str, data: &[u8]) -> bool {
 
 #[tauri::command]
 fn decode_qr_from_file(path: String) -> Option<String> {
-    // Read file first bytes for magic check
+    println!("📄 [后端] 开始解析文件: {}", path);
     match std::fs::read(&path) {
         Ok(data) => {
             if !is_image_file(&path, &data) {
-                eprintln!("Skipping non-image file: {}", path);
+                eprintln!("⚠️ [后端] 跳过非图片文件: {}", path);
                 return None;
             }
 
-            // Open image file and decode QR code
             match image::load_from_memory(&data) {
                 Ok(img) => {
-                    let gray_img = img.to_luma8();
-                    let mut prepared = rqrr::PreparedImage::prepare(gray_img);
-                    let grids = prepared.detect_grids();
-                    for grid in grids {
-                        if let Ok((_, content)) = grid.decode() {
+                    // Try original RGBA
+                    let rgba_img = img.to_rgba8();
+                    let decoder = bardecoder::default_decoder();
+                    let results = decoder.decode(&rgba_img);
+                    for result in results {
+                        if let Ok(content) = result {
+                            println!("✅ [后端] 文件二维码解析成功: {}", content);
                             return Some(content);
                         }
                     }
+
+                    // Try grayscale
+                    let gray_img = img.to_luma8();
+                    let mut gray_rgba = RgbaImage::new(rgba_img.width(), rgba_img.height());
+                    for (x, y, pixel) in gray_img.enumerate_pixels() {
+                        let g = pixel.0[0];
+                        gray_rgba.put_pixel(x, y, image::Rgba([g, g, g, 255]));
+                    }
+                    let results = decoder.decode(&gray_rgba);
+                    for result in results {
+                        if let Ok(content) = result {
+                            println!("✅ [后端] 文件灰度解析成功: {}", content);
+                            return Some(content);
+                        }
+                    }
+
+                    // Try inverted grayscale
+                    let inverted_gray: Vec<u8> = gray_img.pixels().map(|p| 255 - p.0[0]).collect();
+                    let inverted_gray_img = GrayImage::from_vec(gray_img.width(), gray_img.height(), inverted_gray)
+                        .expect("Failed to create inverted image");
+                    let mut inverted_gray_rgba = RgbaImage::new(gray_img.width(), gray_img.height());
+                    for (x, y, pixel) in inverted_gray_img.enumerate_pixels() {
+                        let g = pixel.0[0];
+                        inverted_gray_rgba.put_pixel(x, y, image::Rgba([g, g, g, 255]));
+                    }
+                    let results = decoder.decode(&inverted_gray_rgba);
+                    for result in results {
+                        if let Ok(content) = result {
+                            println!("✅ [后端] 文件反转解析成功: {}", content);
+                            return Some(content);
+                        }
+                    }
+
+                    println!("⚠️ [后端] 文件中未检测到二维码");
                     None
                 }
                 Err(e) => {
-                    eprintln!("Failed to load image from {}: {}", path, e);
+                    eprintln!("❌ [后端] 加载图片失败 {}: {}", path, e);
                     None
                 }
             }
         }
         Err(e) => {
-            eprintln!("Failed to read file {}: {}", path, e);
+            eprintln!("❌ [后端] 读取文件失败 {}: {}", path, e);
             None
         }
     }
