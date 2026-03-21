@@ -2,9 +2,9 @@
 
 [https://clipqr.needhelp.icu/](https://clipqr.needhelp.icu/)
 
-[图片](https://clipqr.needhelp.icu/%E5%BA%94%E7%94%A8%E6%88%AA%E5%9B%BE.png)
+![图片](https://clipqr.needhelp.icu/%E5%BA%94%E7%94%A8%E6%88%AA%E5%9B%BE.png)
 
-![演示视频](https://clipqr.needhelp.icu/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91.mp4)
+<video controls="" poster="/%E5%BA%94%E7%94%A8%E6%88%AA%E5%9B%BE.png" data-v-9dcdf5fa=""><source src="/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91.mp4" type="video/mp4" data-v-9dcdf5fa=""> 你的浏览器不支持视频播放。 </video>
 
 一个基于 Tauri + Vue 3 开发的跨平台桌面二维码解析应用，快速读取剪贴板和本地图片中的二维码内容。
 
