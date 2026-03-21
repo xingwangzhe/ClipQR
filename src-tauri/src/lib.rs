@@ -121,7 +121,9 @@ pub fn run() {
             match event {
                 tauri::WindowEvent::CloseRequested { api, .. } => {
                     // 关闭窗口不退出，只是隐藏
-                    window.hide().unwrap();
+                    if let Err(e) = window.hide() {
+                        eprintln!("Failed to hide window: {}", e);
+                    }
                     api.prevent_close();
                 }
                 _ => {}

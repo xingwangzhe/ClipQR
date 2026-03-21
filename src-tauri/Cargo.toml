@@ -1,8 +1,8 @@
 [package]
-name = "app"
+name = "clipqr"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "ClipQR - 快捷二维码解析工具"
+authors = ["xingwangzhe"]
 license = "MIT"
 repository = "https://github.com/xingwangzhe/ClipQR"
 edition = "2024"
@@ -10,7 +10,7 @@ edition = "2024"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "app_lib"
+name = "clipqr_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
