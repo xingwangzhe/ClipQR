@@ -1,5 +1,9 @@
 # ClipQR 📱 - 快捷二维码解析工具
 
+[https://clipqr.needhelp.icu/](https://clipqr.needhelp.icu/)
+
+
+
 一个基于 Tauri + Vue 3 开发的跨平台桌面二维码解析应用，快速读取剪贴板和本地图片中的二维码内容。
 
 ## ✨ 功能特性
