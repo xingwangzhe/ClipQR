@@ -21,8 +21,7 @@
     ],
     "security": {
       "csp": null
-    },
-    "exitOnLastWindowClose": false
+    }
   },
   "bundle": {
     "active": true,
