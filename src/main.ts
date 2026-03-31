@@ -74,9 +74,7 @@ const menu = await Menu.new({
       id: 'show_window',
       text: '显示主窗口',
       action: async () => {
-        await appWindow.show();
-        await appWindow.unminimize();
-        await appWindow.setFocus();
+        await invoke('show_or_recreate_main_window');
       }
     },
     {

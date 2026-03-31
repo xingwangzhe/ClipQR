@@ -1,11 +1,12 @@
-use image::{self, RgbaImage, GrayImage};
 use bardecoder;
+use image::{self, GrayImage, RgbaImage};
+mod window_manager;
+use window_manager::*;
 
 #[tauri::command]
 fn decode_qr(rgba: Vec<u8>, width: u32, height: u32) -> Option<String> {
     // We already get RGBA from Tauri clipboard
-    let img = RgbaImage::from_raw(width, height, rgba)
-        .expect("Failed to create RGBA image buffer");
+    let img = RgbaImage::from_raw(width, height, rgba).expect("Failed to create RGBA image buffer");
 
     // Try with bardecoder (zxing based, more accurate detection)
     let decoder = bardecoder::default_decoder();
@@ -47,8 +48,8 @@ fn decode_qr(rgba: Vec<u8>, width: u32, height: u32) -> Option<String> {
 
     // Try inverted grayscale (for dark background QR codes)
     let inverted_gray: Vec<u8> = gray_pixels.iter().map(|&g| 255 - g).collect();
-    let inverted_gray_img = GrayImage::from_vec(width, height, inverted_gray)
-        .expect("Failed to create inverted image");
+    let inverted_gray_img =
+        GrayImage::from_vec(width, height, inverted_gray).expect("Failed to create inverted image");
 
     // Convert to RGBA
     let mut inverted_gray_rgba = RgbaImage::new(width, height);
@@ -146,9 +147,11 @@ fn decode_qr_from_file(path: String) -> Option<String> {
 
                     // Try inverted grayscale
                     let inverted_gray: Vec<u8> = gray_img.pixels().map(|p| 255 - p.0[0]).collect();
-                    let inverted_gray_img = GrayImage::from_vec(gray_img.width(), gray_img.height(), inverted_gray)
-                        .expect("Failed to create inverted image");
-                    let mut inverted_gray_rgba = RgbaImage::new(gray_img.width(), gray_img.height());
+                    let inverted_gray_img =
+                        GrayImage::from_vec(gray_img.width(), gray_img.height(), inverted_gray)
+                            .expect("Failed to create inverted image");
+                    let mut inverted_gray_rgba =
+                        RgbaImage::new(gray_img.width(), gray_img.height());
                     for (x, y, pixel) in inverted_gray_img.enumerate_pixels() {
                         let g = pixel.0[0];
                         inverted_gray_rgba.put_pixel(x, y, image::Rgba([g, g, g, 255]));
@@ -177,6 +180,18 @@ fn decode_qr_from_file(path: String) -> Option<String> {
     }
 }
 
+#[tauri::command]
+fn show_or_recreate_main_window(app: tauri::AppHandle) -> () {
+    if let Some(window) = window_manager::get_main_window() {
+        // 窗口存在，显示并聚焦
+        let _ = window.show();
+        let _ = window.set_focus();
+    } else {
+        // 窗口已销毁，重新创建（webview 也会重新创建）
+        window_manager::recreate_main_window(&app);
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -187,20 +202,25 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![decode_qr, decode_qr_from_file])
+        .invoke_handler(tauri::generate_handler![
+            decode_qr,
+            decode_qr_from_file,
+            show_or_recreate_main_window
+        ])
         .on_window_event(|window, event| {
             match event {
                 tauri::WindowEvent::CloseRequested { api, .. } => {
-                    // 关闭窗口不退出，只是隐藏
-                    if let Err(e) = window.hide() {
-                        eprintln!("Failed to hide window: {}", e);
-                    }
+                    // 关闭窗口不退出，销毁 webview 实例
+                    window_manager::destroy_main_window();
                     api.prevent_close();
                 }
                 _ => {}
             }
         })
         .setup(|app| {
+            // 获取初始主窗口并保存引用
+            let main_window = app.get_window("main").unwrap();
+            window_manager::init(main_window);
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
