@@ -1,5 +1,6 @@
 use bardecoder;
 use image::{self, GrayImage, RgbaImage};
+use tauri::Manager;
 mod window_manager;
 use window_manager::*;
 
@@ -207,7 +208,7 @@ pub fn run() {
             decode_qr_from_file,
             show_or_recreate_main_window
         ])
-        .on_window_event(|window, event| {
+        .on_window_event(|_window, event| {
             match event {
                 tauri::WindowEvent::CloseRequested { api, .. } => {
                     // 关闭窗口不退出，销毁 webview 实例
@@ -219,7 +220,7 @@ pub fn run() {
         })
         .setup(|app| {
             // 获取初始主窗口并保存引用
-            let main_window = app.get_window("main").unwrap();
+            let main_window = app.get_webview_window("main").unwrap();
             window_manager::init(main_window);
             if cfg!(debug_assertions) {
                 app.handle().plugin(

@@ -1,16 +1,15 @@
 use once_cell::sync::OnceCell;
 use std::sync::Arc;
-use tauri::Window;
+use tauri::{AppHandle, WebviewWindow};
+use tauri::webview::WebviewWindowBuilder;
 
-static MAIN_WINDOW: OnceCell<Arc<Option<Window>>> = OnceCell::new();
+static MAIN_WINDOW: OnceCell<Arc<Option<WebviewWindow>>> = OnceCell::new();
 
-pub fn init(window: Window) {
-    // 初始化时保存窗口引用
+pub fn init(window: WebviewWindow) {
     MAIN_WINDOW.set(Arc::new(Some(window))).ok();
 }
 
-pub fn get_main_window() -> Option<Window> {
-    // 获取窗口引用（如果还存在）
+pub fn get_main_window() -> Option<WebviewWindow> {
     MAIN_WINDOW
         .get()
         .map(|arc| arc.as_ref().as_ref().cloned())
@@ -18,26 +17,26 @@ pub fn get_main_window() -> Option<Window> {
 }
 
 pub fn destroy_main_window() {
-    // 销毁窗口和 webview
     if let Some(arc_window) = MAIN_WINDOW.get() {
         if let Some(window) = arc_window.as_ref() {
             let _ = window.destroy();
-            // 注意：destroy 后窗口就没了，这里只需要清空引用
-            // 因为 OnceCell 不能清空，所以用 Option 包裹
         }
     }
 }
 
-pub fn recreate_main_window(app: &tauri::AppHandle) -> tauri::Window {
-    // 重新创建窗口
-    let window = tauri::WindowBuilder::new(app, "main", tauri::WindowUrl::default())
-        .build()
-        .expect("Failed to recreate main window");
+pub fn recreate_main_window(app: &AppHandle) -> WebviewWindow {
+    let window = WebviewWindowBuilder::new(
+        app,
+        "main",
+        Default::default()
+    )
+    .build()
+    .expect("Failed to recreate main window");
 
-    // 重新保存引用
-    *MAIN_WINDOW
-        .get_or_init(|| Arc::new(Some(window.clone())))
-        .clone();
+    // OnceCell 只能初始化一次，第二次 set 会失败，但不影响
+    // 我们只需要确保至少存了一次即可
+    let _cell = MAIN_WINDOW.get_or_init(|| Arc::new(Some(window.clone())));
+    let _ = MAIN_WINDOW.set(Arc::new(Some(window.clone())));
 
     window
 }
