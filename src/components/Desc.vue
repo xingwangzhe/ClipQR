@@ -4,7 +4,7 @@
       ClipQR
     </h1>
     <p class="text-lg text-slate-600 dark:text-slate-300">
-      拖拽二维码图片或者读取剪贴板来解析内容
+      {{ $t('app.desc') }}
     </p>
   </div>
 </template>

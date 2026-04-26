@@ -34,7 +34,7 @@ ClipQR 是一个跨平台桌面二维码解析应用，基于 Tauri + Vue 3 开�
 
 需要提前安装：
 - Rust 开发环境
-- Node.js 18+
+- Bun（参考 [Bun 官方文档](https://bun.sh/docs/installation)）
 - Tauri 系统依赖（参考 [Tauri 环境设置](https://tauri.app/start/prerequisites/)）
 
 编译步骤：
@@ -42,8 +42,8 @@ ClipQR 是一个跨平台桌面二维码解析应用，基于 Tauri + Vue 3 开�
 ```bash
 git clone https://github.com/xingwangzhe/ClipQR.git
 cd ClipQR
-npm install
-npm run tauri build
+bun install
+bun run tauri build
 ```
 
 ## 使用说明

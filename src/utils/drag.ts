@@ -1,4 +1,5 @@
 import { listen } from '@tauri-apps/api/event'
+import { t } from '../i18n'
 import { parseFile, processQrContent } from './qr'
 
 export interface DragListeners {
@@ -6,10 +7,6 @@ export interface DragListeners {
   onDragStateChange: (isDragging: boolean) => void
 }
 
-/**
- * 初始化文件拖拽监听
- * 返回清理函数数组
- */
 export async function initFileDrop({
   onResult,
   onDragStateChange
@@ -22,7 +19,7 @@ export async function initFileDrop({
     if (paths.length === 0) return
 
     const filePath = paths[0]
-    console.log('📦 拖拽文件路径:', filePath)
+    console.log('📦 Drag file path:', filePath)
 
     try {
       const result = await parseFile(filePath)
@@ -31,8 +28,8 @@ export async function initFileDrop({
       }
       onResult(result)
     } catch (e) {
-      console.error('❌ 解析失败:', e)
-      onResult('解析失败: ' + e)
+      console.error('❌ Parse failed:', e)
+      onResult(t('fileButton.parseFailed') + ': ' + e)
     }
   }))
 
