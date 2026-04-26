@@ -1,0 +1,98 @@
+# Privacy Policy for ClipQR
+
+**Last Updated: April 26, 2026**
+
+## Introduction
+
+Welcome to ClipQR ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website at https://clipqr.needhelp.icu/.
+
+## Information We Collect
+
+### 1. Technical and Usage Data
+
+We may collect the following information automatically when you visit our website:
+- IP address and geographic location
+- Browser user agent and device information
+- Website usage patterns, pages visited, and timestamps
+- Cookies and similar tracking technologies for service functionality
+
+### 2. User-Generated Content
+
+When you use our QR code tools:
+- QR code content you generate, scan, or upload (including text, URLs, and other data)
+- Image files you upload for QR code processing
+- This data is processed to provide our services and may be temporarily stored in server memory or logs
+
+### 3. Account and Payment Information
+
+If you create an account or purchase services:
+- Account credentials (username, email address)
+- Payment transaction information (processed through our payment providers)
+- Subscription details and billing history
+- We do not store complete credit card or payment method details on our servers
+
+### 4. Third-Party Services
+
+We may use the following third-party services:
+- **Payment Processors**: Stripe, PayPal, or similar services to process payments
+- **Analytics Services**: Tools to analyze website usage and improve our service
+- These third parties have their own privacy policies governing their use of your information
+
+## How We Use Your Information
+
+We use the information we collect to:
+- Provide, maintain, and improve our QR code processing services
+- Process payments and manage subscriptions
+- Respond to your inquiries and requests
+- Monitor and prevent fraud, abuse, and security incidents
+- Send you service updates and important notifications
+- Comply with legal obligations
+
+## Data Storage and Retention
+
+- User data is stored on servers operated by us or our service providers
+- Technical logs and usage data are typically retained for 30-90 days
+- Account information and payment records are retained for as long as your account is active and for legal compliance purposes thereafter
+- QR code content and processed image data may be temporarily cached but is not permanently stored unless explicitly part of a paid feature
+
+## Data Sharing and Disclosure
+
+We do not sell your personal information to third parties. We may share your information with:
+- Service providers who assist us in operating our website and providing services (payment processors, hosting providers, analytics services)
+- Legal authorities when required by law or to protect our rights, property, and safety
+- Business partners only with your explicit consent
+
+## Your Rights
+
+You have the right to:
+- Access your personal information
+- Correct inaccurate information
+- Request deletion of your account and associated information
+- Opt-out of marketing communications
+- Withdraw consent at any time where consent was the basis for processing
+
+To exercise these rights, please contact us through our website.
+
+## Data Security
+
+We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.
+
+## QR Code Data Privacy
+
+- QR codes generated through our service are not publicly indexed or made available to other users unless you explicitly share them
+- Private QR code generation is processed on our servers and not shared with third parties
+- We do not scan, read, or use the content of your QR codes for any purpose other than providing the service you requested
+
+## Children's Privacy
+
+Our website is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If we discover we have collected information from a child under 13, we will delete it promptly.
+
+## Changes to This Policy
+
+We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.
+
+## Contact Us
+
+If you have any questions about this Privacy Policy, please contact us at:
+
+Website: https://clipqr.needhelp.icu/

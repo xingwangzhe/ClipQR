@@ -41,6 +41,9 @@ export default {
     latestVersion: '下载最新版本'
   },
   footer: {
+    privacyPolicy: '隐私政策',
+    termsOfService: '服务条款',
+    refundPolicy: '退款政策',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
   meta: {

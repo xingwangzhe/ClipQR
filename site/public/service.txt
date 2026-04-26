@@ -1,0 +1,86 @@
+# Terms of Service for ClipQR
+
+**Last Updated: April 26, 2026**
+
+## 1. Acceptance of Terms
+
+By accessing and using ClipQR (https://clipqr.needhelp.icu/), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website.
+
+## 2. Description of Service
+
+ClipQR provides online tools and utilities for QR code scanning, generation, and processing. Our services are provided "as is" without warranties of any kind.
+
+## 3. Operator Identity
+
+This service is operated by an individual developer ("ClipQR Operator", "we", "us", or "our"). It is not operated by a corporation or legal entity.
+
+## 4. User Responsibilities
+
+By using our services, you agree to:
+- Provide accurate information when required
+- Use the services only for lawful purposes
+- Not attempt to disrupt or compromise our systems
+- Not use automated systems to access our services without permission
+- Comply with all applicable laws and regulations
+- Be solely responsible for any content you upload, generate, or process through our service
+
+## 5. User Content and Rights
+
+- You retain all rights to any content, data, or information you upload, generate, or process through ClipQR
+- You grant us a limited, non-exclusive license to process, store, and transmit your content solely for the purpose of providing our services
+- You represent and warrant that you have all necessary rights to any content you submit
+- You agree not to upload, generate, or process content that is illegal, infringing, malicious, or violates any third-party rights
+
+## 6. Intellectual Property
+
+All content, features, and functionality of ClipQR are owned by the ClipQR Operator and are protected by international copyright, trademark, and other intellectual property laws.
+
+## 7. Limitation of Liability
+
+To the maximum extent permitted by law:
+- We are not liable for any indirect, incidental, special, consequential, or punitive damages
+- We are not liable for data loss, business interruption, lost profits, or lost revenue
+- Our total aggregate liability for any claim arising from use of our services shall not exceed the total amount you actually paid us in the past 12 months
+- We do not guarantee uninterrupted or error-free service
+- We do not guarantee that our services will meet your specific requirements or business needs
+
+## 8. Disclaimer of Warranties
+
+Our services are provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied, including but not limited to:
+- Merchantability
+- Fitness for a particular purpose
+- Non-infringement
+- Accuracy or reliability of results
+- 100% service availability or uptime
+
+## 9. Indemnification
+
+You agree to indemnify and hold harmless the ClipQR Operator and its officers, directors, employees, and agents from any claims, damages, or expenses arising from your use of our services, violation of these terms, or infringement of any intellectual property or other right of any person or entity.
+
+## 10. Account Termination and Service Suspension
+
+We may terminate or suspend your access to our services immediately, without prior notice or refund, for any reason, including but not limited to:
+- Breach of these Terms of Service
+- Fraudulent activity or payment disputes
+- Abuse or misuse of our services
+- Any activity that may cause harm to us, other users, or third parties
+
+Upon termination, your right to use the service ceases immediately.
+
+## 11. Governing Law and Dispute Resolution
+
+These Terms shall be governed by and construed in accordance with the laws of the People's Republic of China, without regard to its conflict of law provisions. Any dispute arising from these terms shall be submitted to the people's court with jurisdiction at the operator's location.
+
+## 12. Changes to Terms
+
+We reserve the right to modify these terms at any time. We will notify users of significant changes by:
+- Posting a notice on our website
+- Updating the "Last Updated" date
+
+Continued use of our services after changes constitutes acceptance of the new terms.
+
+## 13. Contact Information
+
+For questions about these Terms of Service, please contact us:
+
+Website: https://clipqr.needhelp.icu/

@@ -135,6 +135,11 @@ useMeta()
                 <p>
                     <a href="https://github.com/xingwangzhe/ClipQR" target="_blank">{{ t('nav.github') }}</a> • MIT License
                 </p>
+                <p class="policies">
+                    <a href="/privacy.txt" target="_blank">{{ t('footer.privacyPolicy') }}</a> •
+                    <a href="/service.txt" target="_blank">{{ t('footer.termsOfService') }}</a> •
+                    <a href="/refund.txt" target="_blank">{{ t('footer.refundPolicy') }}</a>
+                </p>
                 <p class="copyright">{{ t('footer.copyright') }}</p>
             </div>
         </footer>
@@ -420,8 +425,13 @@ useMeta()
     color: #3b82f6;
 }
 
+.policies {
+    margin: 1rem 0;
+    font-size: 0.875rem;
+}
+
 .copyright {
-    margin: 1rem 0 0;
+    margin: 0;
     font-size: 0.875rem;
 }
 
