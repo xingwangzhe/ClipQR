@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import { useMeta } from './composables/useMeta'
+
+const { t } = useI18n()
+useMeta()
+</script>
+
 <template>
     <div class="app">
         <!-- Hero 区域 -->
@@ -7,32 +16,35 @@
                     <span class="logo-icon">📱</span>
                     <span class="logo-text">ClipQR</span>
                 </div>
-                <a href="https://github.com/xingwangzhe/ClipQR" target="_blank" class="github-link">
-                    GitHub
-                </a>
+                <div class="nav-actions">
+                    <a href="https://github.com/xingwangzhe/ClipQR" target="_blank" class="github-link">
+                        {{ t('nav.github') }}
+                    </a>
+                    <LanguageSwitcher />
+                </div>
             </nav>
 
             <div class="hero">
                 <div class="hero-content">
                     <h1 class="title">ClipQR</h1>
-                    <p class="subtitle">快捷二维码解析工具</p>
+                    <p class="subtitle">{{ t('hero.subtitle') }}</p>
                     <p class="description">
-                        基于 Tauri + Vue 3 开发的跨平台桌面应用<br>
-                        快速读取剪贴板和本地图片中的二维码内容
+                        {{ t('hero.description').split('\n')[0] }}<br>
+                        {{ t('hero.description').split('\n')[1] }}
                     </p>
                     <div class="download-buttons">
                         <a href="https://github.com/xingwangzhe/ClipQR/releases" target="_blank"
                             class="btn btn-primary">
-                            立即下载
+                            {{ t('hero.downloadNow') }}
                         </a>
                         <a href="#features" class="btn btn-secondary">
-                            了解更多
+                            {{ t('hero.learnMore') }}
                         </a>
                     </div>
                 </div>
                 <!-- 主截图 -->
                 <div class="hero-image">
-                    <img src="/应用截图.png" alt="ClipQR 应用截图" />
+                    <img src="/应用截图.png" :alt="t('hero.appScreenshot')" />
                 </div>
             </div>
         </header>
@@ -40,37 +52,37 @@
         <!-- 功能特性 -->
         <section id="features" class="features">
             <div class="container">
-                <h2 class="section-title">✨ 功能特性</h2>
+                <h2 class="section-title">{{ t('features.title') }}</h2>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">📋</div>
-                        <h3>剪贴板直读</h3>
-                        <p>直接读取剪贴板中的图片，一键解析二维码</p>
+                        <h3>{{ t('features.clipboardRead') }}</h3>
+                        <p>{{ t('features.clipboardReadDesc') }}</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">📁</div>
-                        <h3>本地文件</h3>
-                        <p>支持从本地图片文件中解析二维码</p>
+                        <h3>{{ t('features.localFile') }}</h3>
+                        <p>{{ t('features.localFileDesc') }}</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🖱️</div>
-                        <h3>拖拽解析</h3>
-                        <p>支持拖拽图片文件到窗口直接解析</p>
+                        <h3>{{ t('features.dragDrop') }}</h3>
+                        <p>{{ t('features.dragDropDesc') }}</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🚀</div>
-                        <h3>快速响应</h3>
-                        <p>使用 Rust 高性能解析，瞬间出结果</p>
+                        <h3>{{ t('features.fastResponse') }}</h3>
+                        <p>{{ t('features.fastResponseDesc') }}</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">📎</div>
-                        <h3>一键复制</h3>
-                        <p>点击即可复制解析结果到剪贴板</p>
+                        <h3>{{ t('features.oneClickCopy') }}</h3>
+                        <p>{{ t('features.oneClickCopyDesc') }}</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🌐</div>
-                        <h3>自动打开链接</h3>
-                        <p>识别到 URL 自动打开浏览器</p>
+                        <h3>{{ t('features.autoOpenLink') }}</h3>
+                        <p>{{ t('features.autoOpenLinkDesc') }}</p>
                     </div>
                 </div>
             </div>
@@ -79,12 +91,12 @@
         <!-- 演示视频区域 -->
         <section class="demo-section">
             <div class="container">
-                <h2 class="section-title">🎬 演示视频</h2>
+                <h2 class="section-title">{{ t('demo.title') }}</h2>
                 <!-- 演示视频 -->
                 <div class="video-container">
                     <video controls poster="/应用截图.png">
                         <source src="/演示视频.mp4" type="video/mp4">
-                        你的浏览器不支持视频播放。
+                        {{ t('demo.videoNotSupported') }}
                     </video>
                 </div>
             </div>
@@ -93,12 +105,12 @@
         <!-- 使用场景 -->
         <section class="use-cases">
             <div class="container">
-                <h2 class="section-title">🎯 使用场景</h2>
+                <h2 class="section-title">{{ t('useCases.title') }}</h2>
                 <ul class="use-cases-list">
-                    <li>快捷解析截图中的二维码，无需打开手机</li>
-                    <li>保存二维码图片后快速提取内容</li>
-                    <li>开发过程中快速验证生成的二维码</li>
-                    <li>提取文档或网页截图中的二维码信息</li>
+                    <li>{{ t('useCases.case1') }}</li>
+                    <li>{{ t('useCases.case2') }}</li>
+                    <li>{{ t('useCases.case3') }}</li>
+                    <li>{{ t('useCases.case4') }}</li>
                 </ul>
             </div>
         </section>
@@ -106,12 +118,12 @@
         <!-- 下载区域 -->
         <section class="download-section">
             <div class="container">
-                <h2 class="section-title">📥 立即下载</h2>
-                <p class="download-text">前往 GitHub Releases 页面下载对应平台的最新版本</p>
+                <h2 class="section-title">{{ t('download.title') }}</h2>
+                <p class="download-text">{{ t('download.text') }}</p>
                 <div class="download-buttons-center">
                     <a href="https://github.com/xingwangzhe/ClipQR/releases" target="_blank"
                         class="btn btn-primary large">
-                        下载最新版本
+                        {{ t('download.latestVersion') }}
                     </a>
                 </div>
             </div>
@@ -121,9 +133,9 @@
         <footer class="footer">
             <div class="container">
                 <p>
-                    <a href="https://github.com/xingwangzhe/ClipQR" target="_blank">GitHub</a> • MIT License
+                    <a href="https://github.com/xingwangzhe/ClipQR" target="_blank">{{ t('nav.github') }}</a> • MIT License
                 </p>
-                <p class="copyright">©2026-now ClipQR. Made with ❤️</p>
+                <p class="copyright">{{ t('footer.copyright') }}</p>
             </div>
         </footer>
     </div>
@@ -147,6 +159,12 @@
     padding: 1.5rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .logo {
