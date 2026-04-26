@@ -1,4 +1,4 @@
-# ClipQR - 快捷二维码解析工具
+# ClipQR - Quick QR Code Parser
 
 [English](#english) | [中文](#chinese)
 
@@ -81,6 +81,14 @@ src-tauri/        # Rust backend
   Cargo.toml       # Dependency configuration
   tauri.conf.json  # Tauri configuration
 ```
+
+## Donate
+
+If this project has been helpful to you, feel free to buy the author a coffee ☕
+
+| WeChat Pay | Alipay |
+|:----------:|:------:|
+| ![WeChat Pay](https://xingwangzhe.fun/wechat_pay.webp) | ![Alipay](https://xingwangzhe.fun/ali_pay.webp) |
 
 ## Contributing
 
@@ -169,6 +177,14 @@ src-tauri/        # Rust 后端
   Cargo.toml       # 依赖配置
   tauri.conf.json  # Tauri 配置
 ```
+
+## 捐赠支持
+
+如果这个项目对你有帮助，欢迎请作者喝杯咖啡 ☕
+
+| 微信支付 | 支付宝 |
+|:-------:|:------:|
+| ![微信支付](https://xingwangzhe.fun/wechat_pay.webp) | ![支付宝](https://xingwangzhe.fun/ali_pay.webp) |
 
 ## 贡献
 

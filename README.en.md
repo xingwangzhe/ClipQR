@@ -76,6 +76,14 @@ src-tauri/        # Rust backend
   tauri.conf.json  # Tauri configuration
 ```
 
+## Donate
+
+If this project has been helpful to you, feel free to buy the author a coffee ☕
+
+| WeChat Pay | Alipay |
+|:----------:|:------:|
+| ![WeChat Pay](https://xingwangzhe.fun/wechat_pay.webp) | ![Alipay](https://xingwangzhe.fun/ali_pay.webp) |
+
 ## Contributing
 
 Issues and Pull Requests are welcome.
