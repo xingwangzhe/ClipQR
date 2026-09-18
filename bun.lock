@@ -21,7 +21,6 @@
         "@tauri-apps/cli": "^2.11.4",
         "@types/node": "^26.6.1",
         "@vitejs/plugin-vue": "^6.0.9",
-        "@vue/tsconfig": "^0.9.1",
         "tailwindcss": "^4.3.3",
         "typescript": "~6.0.0",
         "vite": "^8.3.0",
@@ -189,8 +188,6 @@
     "@vue/server-renderer": ["@vue/server-renderer@3.5.43", "https://registry.npmmirror.com/@vue/server-renderer/-/server-renderer-3.5.43.tgz", { "dependencies": { "@vue/compiler-ssr": "3.5.43", "@vue/runtime-dom": "3.5.43", "@vue/shared": "3.5.43" } }, "sha512-l2Ygjv9NehV94PSBxNWsAHC0j/eIIKbn92mBuWXAPGLnn6HfJ6MH5ubsd+Nk0YoZ5FRuxWI1P2VSoh+dbPQhCQ=="],
 
     "@vue/shared": ["@vue/shared@3.5.43", "https://registry.npmmirror.com/@vue/shared/-/shared-3.5.43.tgz", {}, "sha512-uksS7YGMR5NZyr4JNq0Rp+QyLns0ueaz20KwzIPW9R0LH1Vnt4E+XUM29PNseEbf1www2gOuhuDi5AKOIXag9Q=="],
-
-    "@vue/tsconfig": ["@vue/tsconfig@0.9.1", "https://registry.npmmirror.com/@vue/tsconfig/-/tsconfig-0.9.1.tgz", { "peerDependencies": { "typescript": ">= 5.8", "vue": "^3.4.0" }, "optionalPeers": ["typescript", "vue"] }, "sha512-buvjm+9NzLCJL29KY1j1991YYJ5e6275OiK+G4jtmfIb+z4POywbdm0wXusT9adVWqe0xqg70TbI7+mRx4uU9w=="],
 
     "alien-signals": ["alien-signals@3.2.1", "https://registry.npmmirror.com/alien-signals/-/alien-signals-3.2.1.tgz", {}, "sha512-I8FjmltrfnDFoZedi5CG8DghVYNhzb/Ijluz7tCSJH0xpd0484Kowhbb1XDYOxfJpU1p5wnM2X54dA+IfGyD1g=="],
 
