@@ -5,7 +5,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { sendNotification } from '@tauri-apps/plugin-notification'
 import { copyToClipboard, parseClipboardImage, parseFile, processQrContent } from './utils/qr'
 import { initFileDrop } from './utils/drag'
-import { setLocale } from './i18n'
+import { languages, setLocale, type Locale } from './i18n'
 
 const { t, locale } = useI18n()
 const result = ref<string | null>(null)
@@ -13,6 +13,7 @@ const busy = ref(false)
 const dragging = ref(false)
 const copied = ref(false)
 const toast = ref<{ kind: string; text: string } | null>(null)
+const languageOpen = ref(false)
 let timer: ReturnType<typeof setTimeout> | undefined
 let unlistens: Array<() => void> = []
 
@@ -43,18 +44,31 @@ async function copyResult() {
   await copyToClipboard(result.value); copied.value = true; notify('success', t('notice.copied'))
   setTimeout(() => { copied.value = false }, 1800)
 }
-async function toggleLocale() {
-  setLocale(locale.value === 'zh-CN' ? 'en-US' : 'zh-CN')
+async function chooseLocale(next: Locale) {
+  setLocale(next)
+  languageOpen.value = false
   if ('__TAURI_INTERNALS__' in window) { const { rebuildTray } = await import('./tray'); await rebuildTray() }
 }
+function handleDocumentClick(event: MouseEvent) {
+  if (!(event.target as HTMLElement).closest('.language-picker')) languageOpen.value = false
+}
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') languageOpen.value = false
+}
 onMounted(async () => {
+  document.addEventListener('click', handleDocumentClick)
+  document.addEventListener('keydown', handleKeydown)
   if (!('__TAURI_INTERNALS__' in window)) return
   unlistens = await initFileDrop({
     onResult: (value) => { if (value) { result.value = value; notify('success', t('notice.decoded')) } else notify('info', t('notice.noQr')) },
     onDragStateChange: (value) => { dragging.value = value },
   })
 })
-onUnmounted(() => unlistens.forEach((unlisten) => unlisten()))
+onUnmounted(() => {
+  unlistens.forEach((unlisten) => unlisten())
+  document.removeEventListener('click', handleDocumentClick)
+  document.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <template>
@@ -62,7 +76,13 @@ onUnmounted(() => unlistens.forEach((unlisten) => unlisten()))
     <div class="ambient ambient-a" /><div class="ambient ambient-b" />
     <header class="topbar">
       <a class="brand" href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer"><span class="brand-mark"><span /></span>ClipQR</a>
-      <nav><a href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer">{{ t('app.website') }} ↗</a><a href="https://github.com/xingwangzhe/ClipQR" target="_blank" rel="noreferrer">GitHub ↗</a><button class="lang" @click="toggleLocale">{{ locale === 'zh-CN' ? 'EN' : '中' }}</button></nav>
+      <nav><a href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer">{{ t('app.website') }} ↗</a><a href="https://github.com/xingwangzhe/ClipQR" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
+      <div class="language-picker">
+        <button class="lang" aria-label="Choose language" :aria-expanded="languageOpen" @click.stop="languageOpen = !languageOpen"><span class="language-glyph">文A</span></button>
+        <div v-if="languageOpen" class="language-menu" role="menu">
+          <button v-for="language in languages" :key="language.code" role="menuitem" class="language-item" :class="{ active: locale === language.code }" @click="chooseLocale(language.code)"><span>{{ language.nativeName }}</span><small>{{ language.englishName }}</small><b v-if="locale === language.code">✓</b></button>
+        </div>
+      </div>
     </header>
     <section class="hero"><div class="eyebrow"><i />{{ t('app.eyebrow') }}</div><h1>{{ t('app.title') }}<br><em>{{ t('app.titleAccent') }}</em></h1><p>{{ t('app.desc') }}</p></section>
     <section class="workspace" :class="{ dragging }"><div class="scan-line" /><div class="workspace-head"><span><b>01</b>{{ t('app.inputLabel') }}</span><small>{{ t('app.dropHint') }}</small></div>
