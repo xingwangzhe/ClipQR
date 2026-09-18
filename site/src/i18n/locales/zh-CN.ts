@@ -25,10 +25,6 @@ export default {
     autoOpenLink: '自动打开链接',
     autoOpenLinkDesc: '识别到 URL 自动打开浏览器'
   },
-  demo: {
-    title: '🎬 演示视频',
-    videoNotSupported: '你的浏览器不支持视频播放。'
-  },
   useCases: {
     title: '🎯 使用场景',
     case1: '快捷解析截图中的二维码，无需打开手机',

@@ -25,10 +25,6 @@ export default {
     autoOpenLink: 'Auto Open Link',
     autoOpenLinkDesc: 'Automatically open browser when URL is detected'
   },
-  demo: {
-    title: '🎬 Demo Video',
-    videoNotSupported: 'Your browser does not support video playback.'
-  },
   useCases: {
     title: '🎯 Use Cases',
     case1: 'Quickly parse QR codes from screenshots without opening your phone',

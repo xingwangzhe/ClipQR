@@ -22,8 +22,6 @@ useMeta()
 
       <section id="features" class="section container"><div class="section-intro"><span class="section-number">02</span><h2>{{ t('features.title') }}</h2><p>{{ t('hero.description').split('\n')[1] }}</p></div><div class="feature-grid"><article><span class="feature-index">A</span><h3>{{ t('features.clipboardRead') }}</h3><p>{{ t('features.clipboardReadDesc') }}</p></article><article><span class="feature-index">B</span><h3>{{ t('features.localFile') }}</h3><p>{{ t('features.localFileDesc') }}</p></article><article><span class="feature-index">C</span><h3>{{ t('features.dragDrop') }}</h3><p>{{ t('features.dragDropDesc') }}</p></article><article><span class="feature-index">D</span><h3>{{ t('features.autoOpenLink') }}</h3><p>{{ t('features.autoOpenLinkDesc') }}</p></article></div></section>
 
-      <section id="demo" class="demo container"><div class="demo-heading"><span class="section-number">03</span><h2>{{ t('demo.title') }}</h2></div><div class="video-frame"><video controls poster="/应用截图.png"><source src="/演示视频.mp4" type="video/mp4">{{ t('demo.videoNotSupported') }}</video></div></section>
-
       <section class="download container"><div><span class="section-number">04</span><h2>{{ t('download.title') }}</h2><p>{{ t('download.text') }}</p></div><a class="button primary" href="https://github.com/xingwangzhe/ClipQR/releases" target="_blank" rel="noreferrer">{{ t('download.latestVersion') }} <span>↗</span></a></section>
     </main>
 
