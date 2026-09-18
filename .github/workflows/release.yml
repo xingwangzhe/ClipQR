@@ -94,12 +94,12 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils nasm
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev libdbus-1-dev libnotify-dev patchelf xdg-utils nasm
 
       - name: 安装 bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: "1.4.2"
 
       - name: 安装 Rust 工具链 (默认目标)
         if: ${{ matrix.args == '' }}
@@ -119,6 +119,13 @@ jobs:
       - name: 安装前端依赖
         run: |
           bun install --frozen-lockfile
+
+      - name: 前端类型检查与生产构建
+        run: bun run build
+
+      - name: Rust 依赖检查
+        if: matrix.platform == 'ubuntu-22.04'
+        run: cargo check --manifest-path src-tauri/Cargo.toml
 
       - name: 构建并发布
         uses: tauri-apps/tauri-action@v0
