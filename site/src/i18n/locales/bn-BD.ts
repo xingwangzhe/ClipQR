@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "ডেমো", description: enUS.demo.description },
+  demo: { ...enUS.demo, title: "ডেমো", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "গিথুব" },
   hero: { ...enUS.hero, subtitle: "দ্রুত QR কোড স্ক্যানার", description: "Tauri + Vue 3 দিয়ে নির্মিত ক্রস-প্ল্যাটফর্ম ডেস্কটপ অ্যাপ ক্লিপবোর্ড এবং স্থানীয় চিত্রগুলি থেকে দ্রুত QR কোড সামগ্রীটি পড়ুন", downloadNow: "এখনই ডাউনলোড করুন", learnMore: "আরও জানুন", appScreenshot: "ক্লিপ কিউআর অ্যাপের স্ক্রিনশট", localFirst: "লোকাল-ফার্স্ট · ওপেন সোর্স · ক্রস-প্ল্যাটফর্ম" },
   features: { ...enUS.features, title: "বৈশিষ্ট্যগুলি", clipboardRead: "ক্লিপবোর্ড ডাইরেক্ট রিড", clipboardReadDesc: "ক্লিপবোর্ড থেকে সরাসরি ছবিগুলি পড়ুন এবং এক ক্লিকে QR কোডগুলি বিশ্লেষণ করুন", localFile: "স্থানীয় ফাইল", localFileDesc: "স্থানীয় চিত্র ফাইল থেকে QR কোডগুলি পার্স করা সমর্থন করে", dragDrop: "টেনে আনুন এবং ড্রপ করুন", dragDropDesc: "সরাসরি পার্সিংয়ের জন্য উইন্ডোতে চিত্র ফাইলগুলি টেনে আনতে সহায়তা করুন", fastResponse: "দ্রুত প্রতিক্রিয়া", fastResponseDesc: "মরিচা, তাত্ক্ষণিক ফলাফল সহ উচ্চ-পারফরম্যান্স পার্সিং", oneClickCopy: "এক-ক্লিক কপি", oneClickCopyDesc: "ক্লিপবোর্ডে ফলাফল পার্সিং কপি করতে ক্লিক করুন", autoOpenLink: "অটো ওপেন লিঙ্ক", autoOpenLinkDesc: "URL সনাক্ত করা হলে স্বয়ংক্রিয়ভাবে ব্রাউজার খুলুন" },

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import QrDemo from './components/QrDemo.vue'
 import { useMeta } from './composables/useMeta'
 
 const { t } = useI18n()
@@ -22,7 +23,7 @@ useMeta()
 
       <section id="features" class="section container"><div class="section-intro"><span class="section-number">{{ t('sections.featuresNumber') }}</span><h2>{{ t('features.title') }}</h2><p>{{ t('hero.description').split('\n')[1] }}</p></div><div class="feature-grid"><article><span class="feature-index">A</span><h3>{{ t('features.clipboardRead') }}</h3><p>{{ t('features.clipboardReadDesc') }}</p></article><article><span class="feature-index">B</span><h3>{{ t('features.localFile') }}</h3><p>{{ t('features.localFileDesc') }}</p></article><article><span class="feature-index">C</span><h3>{{ t('features.dragDrop') }}</h3><p>{{ t('features.dragDropDesc') }}</p></article><article><span class="feature-index">D</span><h3>{{ t('features.autoOpenLink') }}</h3><p>{{ t('features.autoOpenLinkDesc') }}</p></article></div></section>
 
-      <section id="demo" class="demo-section section container"><div class="section-intro"><span class="section-number">{{ t('sections.demoNumber') }}</span><h2>{{ t('demo.title') }}</h2><p>{{ t('demo.description') }}</p></div></section>
+      <section id="demo" class="demo-section section container"><div class="section-intro"><span class="section-number">{{ t('sections.demoNumber') }}</span><h2>{{ t('demo.title') }}</h2><p>{{ t('demo.description') }}</p></div><QrDemo /></section>
 
       <section class="download container"><div><span class="section-number">{{ t('sections.downloadNumber') }}</span><h2>{{ t('download.title') }}</h2><p>{{ t('download.text') }}</p></div><a class="button primary" href="https://github.com/xingwangzhe/ClipQR/releases" target="_blank" rel="noreferrer">{{ t('download.latestVersion') }} <span>↗</span></a></section>
     </main>

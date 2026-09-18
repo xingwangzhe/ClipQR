@@ -43,7 +43,7 @@ export default {
     refundPolicy: 'Refund Policy',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
-  demo: { title: 'Demo', description: 'See how ClipQR turns a local image or clipboard capture into a usable result in one focused step.' },
+  demo: { title: 'Demo', description: 'Try the browser version of the ClipQR workflow with a local image or clipboard capture.', workspaceTitle: 'Decode a QR image', clipboard: 'Read clipboard', clipboardMeta: 'Use an image or copied text', file: 'Choose image', fileMeta: 'Browse or drop a local file', drop: 'Release to decode image', decoding: 'Decoding image…', ready: 'Ready', waiting: 'Waiting for input', noQr: 'No QR code found in this image', failed: 'Could not read this input', result: 'Decoded result', copy: 'Copy result', copied: 'Copied', openLink: 'Open link' },
   sections: { featuresNumber: '02', demoNumber: '03', downloadNumber: '04' },
   meta: {
     title: 'ClipQR - Quick QR Code Scanner',

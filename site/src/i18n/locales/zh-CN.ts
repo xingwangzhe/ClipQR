@@ -43,7 +43,7 @@ export default {
     refundPolicy: '退款政策',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
-  demo: { title: '演示', description: '看看 ClipQR 如何用一个专注步骤，将本地图片或剪贴板截图转换为可用结果。' },
+  demo: { title: '演示', description: '直接在浏览器中体验 ClipQR：读取本地图片或剪贴板内容并解析二维码。', workspaceTitle: '解析二维码图片', clipboard: '读取剪贴板', clipboardMeta: '支持图片或复制的文本', file: '选择图片', fileMeta: '浏览或拖入本地文件', drop: '松开以解析图片', decoding: '正在解析图片…', ready: '已就绪', waiting: '等待输入', noQr: '图片中未找到二维码', failed: '无法读取这个输入', result: '解析结果', copy: '复制结果', copied: '已复制', openLink: '打开链接' },
   sections: { featuresNumber: '02', demoNumber: '03', downloadNumber: '04' },
   meta: {
     title: 'ClipQR - 快捷二维码解析工具',

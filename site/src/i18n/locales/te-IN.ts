@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "డెమో", description: enUS.demo.description },
+  demo: { ...enUS.demo, title: "డెమో", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "గిట్ ‌ హబ్" },
   hero: { ...enUS.hero, subtitle: "త్వరిత QR కోడ్ స్కానర్", description: "టౌరి + వ్యూ 3తో నిర్మించిన క్రాస్-ప్లాట్ ‌ ఫాం డెస్క్ ‌ టాప్ యాప్\\ nక్లిప్ ‌ బోర్డ్ మరియు స్థానిక చిత్రాల నుండి QR కోడ్ కంటెంట్ ‌ ను త్వరగా చదవండి", downloadNow: "ఇపుడు డౌన్లోడ్ చేసుకోండి ", learnMore: "మరింత తెలుసుకోండి", appScreenshot: "క్లిప్ ‌ క్యూఆర్ యాప్ స్క్రీన్ ‌ షాట్", localFirst: "లోకల్-ఫస్ట్ · ఓపెన్ సోర్స్ · క్రాస్-ప్లాట్ ‌ ఫాం" },
   features: { ...enUS.features, title: "✨ ఫీచర్లు", clipboardRead: "క్లిప్ ‌ బోర్డ్ డైరెక్ట్ రీడ్", clipboardReadDesc: "క్లిప్ ‌ బోర్డ్ నుండి చిత్రాలను నేరుగా చదవండి మరియు ఒకే క్లిక్ ‌ తో QR కోడ్ ‌ లను పార్స్ చేయండి", localFile: "స్థానిక దస్త్ర యూ ఆర్ ఎల్Description", localFileDesc: "స్థానిక ఇమేజ్ ఫైల్ ‌ ల నుండి QR కోడ్ ‌ లను పార్సింగ్ చేయడానికి మద్దతు ఇవ్వండి", dragDrop: "డ్రాగ్ & డ్రాప్", dragDropDesc: "డైరెక్ట్ పార్సింగ్ కోసం ఇమేజ్ ఫైల్ ‌ లను విండోకు లాగడానికి మద్దతు ఇవ్వండి", fastResponse: "ఫాస్ట్ రెస్పాన్స్", fastResponseDesc: "రస్ట్ ‌ తో అధిక-పనితీరు, తక్షణ ఫలితాలు", oneClickCopy: "ఒక-క్లిక్ కాపీ", oneClickCopyDesc: "పార్సింగ్ ఫలితాలను క్లిప్ ‌ బోర్డ్ ‌ కు కాపీ చేయడానికి క్లిక్ చేయండి", autoOpenLink: "ఆటో ఓపెన్ లింక్", autoOpenLinkDesc: "URL కనుగొనబడినప్పుడు బ్రౌజర్ ‌ ను ఆటోమేటిక్ ‌ గా తెరవండి" },

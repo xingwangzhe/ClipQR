@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "Bản demo", description: enUS.demo.description },
+  demo: { ...enUS.demo, title: "Bản demo", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "Github" },
   hero: { ...enUS.hero, subtitle: "Máy quét mã QR nhanh", description: "Ứng dụng máy tính để bàn đa nền tảng được xây dựng với Tauri + Vue 3\\ nĐọc nhanh nội dung mã QR từ khay nhớ tạm và hình ảnh cục bộ", downloadNow: "Tải ngay", learnMore: "Tìm hiểu thêm", appScreenshot: "Ảnh chụp màn hình ứng dụng ClipQR", localFirst: "Đầu tiên tại địa phương · Nguồn mở · Đa nền tảng" },
   features: { ...enUS.features, title: "Tính năng", clipboardRead: "Đọc trực tiếp bảng tạm", clipboardReadDesc: "Đọc trực tiếp hình ảnh từ khay nhớ tạm và phân tích mã QR chỉ bằng một cú nhấp chuột", localFile: "Hồ sơ quốc gia", localFileDesc: "Hỗ trợ phân tích mã QR từ các tệp hình ảnh cục bộ", dragDrop: "Kéo & Thả", dragDropDesc: "Hỗ trợ kéo các tệp hình ảnh vào cửa sổ để phân tích cú pháp trực tiếp", fastResponse: "Phản hồi nhanh", fastResponseDesc: "Phân tích cú pháp hiệu suất cao với Rust, kết quả tức thì", oneClickCopy: "Bản sao chỉ bằng một cú nhấp chuột", oneClickCopyDesc: "Nhấp để sao chép kết quả phân tích cú pháp vào khay nhớ tạm", autoOpenLink: "Tự động mở liên kết", autoOpenLinkDesc: "Tự động mở trình duyệt khi phát hiện URL" },

@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "Демо", description: enUS.demo.description },
+  demo: { ...enUS.demo, title: "Демо", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "Быстрый сканер QR-кода", description: "Кроссплатформенное настольное приложение, созданное с помощью Tauri + Vue 3\\nБыстро читайте содержимое QR-кода из буфера обмена и локальных изображений", downloadNow: "Загрузить сейчас", learnMore: "Подробнее", appScreenshot: "Скриншот приложения ClipQR", localFirst: "Local-first · Open source · Кроссплатформенность" },
   features: { ...enUS.features, title: "Возможности", clipboardRead: "Прямое чтение из буфера обмена", clipboardReadDesc: "Непосредственное чтение изображений из буфера обмена и разбор QR-кодов одним щелчком мыши", localFile: "Локальный файл", localFileDesc: "Поддержка анализа QR-кодов из локальных файлов изображений", dragDrop: "Перетащите", dragDropDesc: "Поддержка перетаскивания файлов изображений в окно для прямого анализа", fastResponse: "Экстренное реагирование", fastResponseDesc: "Высокопроизводительный парсинг с Rust, мгновенные результаты", oneClickCopy: "Один щелчок", oneClickCopyDesc: "Нажмите, чтобы скопировать результаты анализа в буфер обмена", autoOpenLink: "Автоматически открывать ссылку", autoOpenLinkDesc: "Автоматически открывать браузер при обнаружении URL-адреса" },
