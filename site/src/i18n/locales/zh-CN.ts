@@ -43,6 +43,7 @@ export default {
     refundPolicy: '退款政策',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
+  demo: { title: "演示" },
   meta: {
     title: 'ClipQR - 快捷二维码解析工具',
     description: 'ClipQR - 快捷二维码解析工具，跨平台桌面应用，快速读取剪贴板和本地图片中的二维码内容'

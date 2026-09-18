@@ -43,6 +43,7 @@ export default {
     refundPolicy: 'Refund Policy',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
+  demo: { title: "Demo" },
   meta: {
     title: 'ClipQR - Quick QR Code Scanner',
     description: 'ClipQR - Quick QR code scanner, cross-platform desktop app, quickly read QR code content from clipboard and local images'

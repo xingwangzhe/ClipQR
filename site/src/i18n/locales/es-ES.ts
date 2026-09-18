@@ -2,6 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
+  demo: { title: "Demostración" },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "Quick QR Code Barcode Scanner", description: "Aplicación de escritorio multiplataforma creada con Tauri + Vue 3\\ nLeerrápidamente el contenido del código QR del portapapeles y las imágenes locales", downloadNow: "Descargar ahora", learnMore: "Descubre más", appScreenshot: "Captura de pantalla de la aplicación ClipQR", localFirst: "Local-first · Código abierto · Multiplataforma" },
   features: { ...enUS.features, title: " Características ", clipboardRead: "Lectura directa del portapapeles", clipboardReadDesc: "Lee directamente las imágenes del portapapeles y analiza los códigos QR con un solo clic", localFile: "Archivo local", localFileDesc: "Admite el análisis de códigos QR de archivos de imagen locales", dragDrop: "Arrastrar y Soltar", dragDropDesc: "Admite arrastrar archivos de imagen a la ventana para el análisis directo", fastResponse: "Contesta rápido", fastResponseDesc: "Análisis de alto rendimiento con óxido, resultados instantáneos", oneClickCopy: "One-Click Copy", oneClickCopyDesc: "Haga clic para copiar los resultados del análisis al portapapeles", autoOpenLink: "Abrir enlace automáticamente", autoOpenLinkDesc: "Abrir automáticamente el navegador cuando se detecta una URL" },

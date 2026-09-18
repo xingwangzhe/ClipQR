@@ -2,6 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
+  demo: { title: "डेमो" },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "क्विक QR कोड स्कैनर", description: "Tauri + Vue 3 के साथ बनाया गया क्रॉस - प्लेटफ़ॉर्म डेस्कटॉप ऐप\\ nक्लिपबोर्ड और स्थानीय छवियों से QR कोड सामग्री को तुरंत पढ़ें", downloadNow: "डाक डाउनलोड करें (D) @ info: tooltip", learnMore: "और जानें", appScreenshot: "क्लिपक्यूआर ऐप स्क्रीनशॉट", localFirst: "लोकल - फर्स्ट · ओपन सोर्स · क्रॉस - प्लेटफ़ॉर्म" },
   features: { ...enUS.features, title: "विशेषताएँ", clipboardRead: "क्लिपबोर्ड डायरेक्ट रीड", clipboardReadDesc: "क्लिपबोर्ड से सीधे इमेज पढ़ें और एक क्लिक में QR कोड पार्स करें", localFile: "सभी फ़ाइलें", localFileDesc: "स्थानीय इमेज फ़ाइलों से क्यूआर कोड पार्स करने में मदद करें", dragDrop: "ड्रैग एंड ड्रॉप", dragDropDesc: "डायरेक्ट पार्सिंग के लिए इमेज फ़ाइलों को खिड़की पर खींचने का समर्थन करें", fastResponse: "तेज़ प्रतिक्रिया", fastResponseDesc: "जंग के साथ उच्च - प्रदर्शन पार्सिंग, तत्काल परिणाम", oneClickCopy: "एक - क्लिक कॉपी", oneClickCopyDesc: "क्लिपबोर्ड पर पार्सिंग परिणामों को कॉपी करने के लिए क्लिक करें", autoOpenLink: "ऑटो ओपन लिंक", autoOpenLinkDesc: "URL का पता चलने पर ब्राउज़र को स्वचालित रूप से खोलें" },

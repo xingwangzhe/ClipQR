@@ -2,6 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
+  demo: { title: "Demo" },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "Hızlı QR Kod Tarayıcı", description: "Tauri + Vue 3 ile oluşturulmuş çapraz platform masaüstü uygulaması\\ n Pano ve yerel görüntülerden QR kodu içeriğini hızlı bir şekilde okuyun", downloadNow: "Şimdi İndirin", learnMore: "Daha Fazla Bilgi Edinin", appScreenshot: "ClipQR Uygulaması Ekran Görüntüsü", localFirst: "Önce yerel · Açık kaynak · Çapraz platform" },
   features: { ...enUS.features, title: " Özellikler ", clipboardRead: "Pano Doğrudan Okuma", clipboardReadDesc: "Panodaki görüntüleri doğrudan okuyun ve tek bir tıklamayla QR kodlarını ayrıştırın", localFile: "Yerel Dosya", localFileDesc: "Yerel görüntü dosyalarından QR kodlarının ayrıştırılmasını destekleyin", dragDrop: "Sürükle bırak", dragDropDesc: "Doğrudan ayrıştırma için resim dosyalarını pencereye sürüklemeyi destekler", fastResponse: "Hızlı Yanıt", fastResponseDesc: "Pas ile yüksek performanslı ayrıştırma, anında sonuçlar", oneClickCopy: "Tek Tıkla Kopyala", oneClickCopyDesc: "Ayrıştırma sonuçlarını panoya kopyalamak için tıklayın", autoOpenLink: "Bağlantıyı Otomatik Aç", autoOpenLinkDesc: "URL algılandığında tarayıcıyı otomatik olarak aç" },
