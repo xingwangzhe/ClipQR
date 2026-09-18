@@ -5,7 +5,6 @@
     "": {
       "name": "site",
       "dependencies": {
-        "@vue/tsconfig": "^0.9.1",
         "vue": "^3.5.43",
         "vue-i18n": "^11.4.12",
         "vue-router": "^5.3.1",
@@ -145,8 +144,6 @@
     "@vue/server-renderer": ["@vue/server-renderer@3.5.43", "https://mirrors.cloud.tencent.com/npm/@vue/server-renderer/-/server-renderer-3.5.43.tgz", { "dependencies": { "@vue/compiler-ssr": "3.5.43", "@vue/runtime-dom": "3.5.43", "@vue/shared": "3.5.43" } }, "sha512-l2Ygjv9NehV94PSBxNWsAHC0j/eIIKbn92mBuWXAPGLnn6HfJ6MH5ubsd+Nk0YoZ5FRuxWI1P2VSoh+dbPQhCQ=="],
 
     "@vue/shared": ["@vue/shared@3.5.43", "https://mirrors.cloud.tencent.com/npm/@vue/shared/-/shared-3.5.43.tgz", {}, "sha512-uksS7YGMR5NZyr4JNq0Rp+QyLns0ueaz20KwzIPW9R0LH1Vnt4E+XUM29PNseEbf1www2gOuhuDi5AKOIXag9Q=="],
-
-    "@vue/tsconfig": ["@vue/tsconfig@0.9.1", "https://mirrors.cloud.tencent.com/npm/@vue/tsconfig/-/tsconfig-0.9.1.tgz", { "peerDependencies": { "typescript": ">= 5.8", "vue": "^3.4.0" }, "optionalPeers": ["typescript", "vue"] }, "sha512-buvjm+9NzLCJL29KY1j1991YYJ5e6275OiK+G4jtmfIb+z4POywbdm0wXusT9adVWqe0xqg70TbI7+mRx4uU9w=="],
 
     "acorn": ["acorn@8.18.0", "https://mirrors.cloud.tencent.com/npm/acorn/-/acorn-8.18.0.tgz", { "bin": { "acorn": "bin/acorn" } }, "sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ=="],
 
