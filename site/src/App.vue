@@ -10,7 +10,7 @@ useMeta()
 <template>
   <div class="site-shell">
     <header class="site-nav container">
-      <a class="site-brand" href="/"><span class="brand-symbol"><i /></span><span>ClipQR</span></a>
+      <a class="site-brand" href="/"><img class="brand-icon" src="/clipqr-icon.png" alt="ClipQR" style="width:30px;height:30px;border-radius:8px" /><span>ClipQR</span></a>
       <nav class="nav-links"><a href="#features">{{ t('features.title') }}</a><a href="#demo">{{ t('demo.title') }}</a><a href="https://github.com/xingwangzhe/ClipQR" target="_blank" rel="noreferrer">GitHub ↗</a><LanguageSwitcher /></nav>
     </header>
 
