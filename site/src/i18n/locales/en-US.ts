@@ -8,6 +8,7 @@ export default {
     downloadNow: 'Download Now',
     learnMore: 'Learn More',
     appScreenshot: 'ClipQR App Screenshot'
+    ,localFirst: 'Local-first · Open source · Cross-platform'
   },
   features: {
     title: '✨ Features',

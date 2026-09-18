@@ -8,6 +8,7 @@ export default {
     downloadNow: '立即下载',
     learnMore: '了解更多',
     appScreenshot: 'ClipQR 应用截图'
+    ,localFirst: '本地优先 · 开源 · 跨平台'
   },
   features: {
     title: '✨ 功能特性',
