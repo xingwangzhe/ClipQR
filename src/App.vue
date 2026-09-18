@@ -5,7 +5,6 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { sendNotification } from '@tauri-apps/plugin-notification'
 import { copyToClipboard, parseClipboardImage, parseFile, processQrContent } from './utils/qr'
 import { initFileDrop } from './utils/drag'
-import { rebuildTray } from './tray'
 import { setLocale } from './i18n'
 
 const { t, locale } = useI18n()
@@ -44,8 +43,12 @@ async function copyResult() {
   await copyToClipboard(result.value); copied.value = true; notify('success', t('notice.copied'))
   setTimeout(() => { copied.value = false }, 1800)
 }
-async function toggleLocale() { setLocale(locale.value === 'zh-CN' ? 'en-US' : 'zh-CN'); await rebuildTray() }
+async function toggleLocale() {
+  setLocale(locale.value === 'zh-CN' ? 'en-US' : 'zh-CN')
+  if ('__TAURI_INTERNALS__' in window) { const { rebuildTray } = await import('./tray'); await rebuildTray() }
+}
 onMounted(async () => {
+  if (!('__TAURI_INTERNALS__' in window)) return
   unlistens = await initFileDrop({
     onResult: (value) => { if (value) { result.value = value; notify('success', t('notice.decoded')) } else notify('info', t('notice.noQr')) },
     onDragStateChange: (value) => { dragging.value = value },

@@ -3,13 +3,6 @@ import zhCN from './locales/zh-CN'
 import enUS from './locales/en-US'
 import { locale as osLocale } from '@tauri-apps/plugin-os'
 
-function detectLocale(): string {
-  const lang = navigator.language
-  if (lang.startsWith('zh')) return 'zh-CN'
-  if (lang.startsWith('en')) return 'en-US'
-  return 'zh-CN'
-}
-
 export const i18n = createI18n({
   legacy: false,
   locale: 'en-US',
