@@ -1,6 +1,6 @@
 export default {
   nav: {
-    github: 'GitHub'
+    github: 'GitHub', chooseLanguage: '选择语言', mitLicense: 'MIT 许可证'
   },
   hero: {
     subtitle: '快捷二维码解析工具',
@@ -8,7 +8,7 @@ export default {
     downloadNow: '立即下载',
     learnMore: '了解更多',
     appScreenshot: 'ClipQR 应用截图'
-    ,localFirst: '本地优先 · 开源 · 跨平台'
+    ,localFirst: '本地优先 · 开源 · 跨平台', eyebrow: 'CLIPQR / 桌面工具', titleSuffix: '不绕路，直接完成。', visualLabel: '01 / 实际运行', visualCaption: '快速解析二维码'
   },
   features: {
     title: '✨ 功能特性',
@@ -43,7 +43,8 @@ export default {
     refundPolicy: '退款政策',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
-  demo: { title: "演示" },
+  demo: { title: '演示', description: '看看 ClipQR 如何用一个专注步骤，将本地图片或剪贴板截图转换为可用结果。' },
+  sections: { featuresNumber: '02', demoNumber: '03', downloadNumber: '04' },
   meta: {
     title: 'ClipQR - 快捷二维码解析工具',
     description: 'ClipQR - 快捷二维码解析工具，跨平台桌面应用，快速读取剪贴板和本地图片中的二维码内容'

@@ -76,10 +76,10 @@ onUnmounted(() => {
     <div class="ambient ambient-a" /><div class="ambient ambient-b" />
     <header class="topbar">
       <a class="brand" href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer"><span class="brand-mark"><span /></span>ClipQR</a>
-      <nav><a href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer">{{ t('app.website') }} ↗</a><a href="https://github.com/xingwangzhe/ClipQR" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
+      <nav><a :title="t('app.externalLink')" href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer">{{ t('app.website') }} ↗</a><a :aria-label="t('app.github')" :title="t('app.externalLink')" href="https://github.com/xingwangzhe/ClipQR" target="_blank" rel="noreferrer">{{ t('app.github') }} ↗</a></nav>
       <div class="language-picker">
-        <button class="lang" aria-label="Choose language" :aria-expanded="languageOpen" @click.stop="languageOpen = !languageOpen"><span class="language-glyph">文A</span></button>
-        <div v-if="languageOpen" class="language-menu" role="menu">
+        <button class="lang" :aria-label="t('app.chooseLanguage')" :aria-expanded="languageOpen" @click.stop="languageOpen = !languageOpen"><span class="language-glyph">文A</span></button>
+        <div v-if="languageOpen" class="language-menu" role="menu" :aria-label="t('app.languageMenu')">
           <button v-for="language in languages" :key="language.code" role="menuitem" class="language-item" :class="{ active: locale === language.code }" @click="chooseLocale(language.code)"><span>{{ language.nativeName }}</span><small>{{ language.englishName }}</small><b v-if="locale === language.code">✓</b></button>
         </div>
       </div>
@@ -87,9 +87,9 @@ onUnmounted(() => {
     <section class="hero"><div class="eyebrow"><i />{{ t('app.eyebrow') }}</div><h1>{{ t('app.title') }}<br><em>{{ t('app.titleAccent') }}</em></h1><p>{{ t('app.desc') }}</p></section>
     <section class="workspace" :class="{ dragging }"><div class="scan-line" /><div class="workspace-head"><span><b>01</b>{{ t('app.inputLabel') }}</span><small>{{ t('app.dropHint') }}</small></div>
       <div class="actions"><button class="action primary" :disabled="busy" @click="readClipboard"><strong>⌁</strong><span>{{ t('readPaste.readClipboard') }}<small>{{ t('app.clipboardMeta') }} <b>→</b></small></span></button><button class="action" :disabled="busy" @click="selectFile"><strong>＋</strong><span>{{ t('fileButton.selectFile') }}<small>{{ t('app.fileMeta') }} <b>→</b></small></span></button></div>
-      <div v-if="dragging" class="drop-overlay">↓　{{ t('dragDrop.dropToParse') }}</div><div v-if="busy" class="working"><i />{{ t('app.working') }}</div>
+      <div v-if="dragging" class="drop-overlay">↓　{{ t('app.dropIndicator') }}</div><div v-if="busy" class="working"><i />{{ t('app.working') }}</div>
     </section>
-    <section v-if="result" class="result-card"><div class="workspace-head"><span><b>02</b>{{ t('app.resultLabel') }}</span><small class="ready">{{ t('app.ready') }}</small></div><p>{{ result }}</p><button class="copy" @click="copyResult">{{ copied ? t('app.copied') : t('app.copyResult') }} <small>⌘ C</small></button></section>
+    <section v-if="result" class="result-card"><div class="workspace-head"><span><b>02</b>{{ t('app.resultLabel') }}</span><small class="ready">{{ t('app.ready') }}</small></div><p>{{ result }}</p><button class="copy" @click="copyResult">{{ copied ? t('app.copied') : t('app.copyResult') }} <small>{{ t('app.copyShortcut') }}</small></button></section>
     <footer><span>ClipQR · {{ t('app.footer') }}</span><i />{{ t('app.version') }}</footer>
     <Transition name="toast"><div v-if="toast" class="toast" :class="toast.kind"><b>{{ toast.kind === 'success' ? '✓' : toast.kind === 'error' ? '!' : 'i' }}</b>{{ toast.text }}</div></Transition>
   </main>

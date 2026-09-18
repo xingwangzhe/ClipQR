@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "ڈیمو" },
+  demo: { title: "ڈیمو", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "فوری QR کوڈ اسکینر", description: "Tauri + Vue 3 کے ساتھ بنایا گیا کراس پلیٹ فارم ڈیسک ٹاپ ایپ\\nکلپ بورڈ اور مقامی تصاویر سے QR کوڈ کا مواد فوری طور پر پڑھیں", downloadNow: "ابھی ڈاؤنلوڈ کریں", learnMore: "مزید جانیں", appScreenshot: "کلپ کیو آر ایپ اسکرین شاٹ", localFirst: "لوکل- فرسٹ · اوپن سورس · کراس پلیٹ فارم" },
   features: { ...enUS.features, title: "خصوصیات", clipboardRead: "کلپ بورڈ براہ راست پڑھیں", clipboardReadDesc: "کلپ بورڈ سے براہ راست تصاویر پڑھیں اور ایک کلک کے ساتھ QR کوڈز کو پارس کریں", localFile: "مقامی فائل", localFileDesc: "مقامی تصویری فائلوں سے QR کوڈز کا تجزیہ کرنے میں معاونت کریں", dragDrop: "گھسیٹیں اور چھوڑیں", dragDropDesc: "براہ راست تجزیہ کے لیے تصویر کی فائلوں کو کھڑکی میں گھسیٹنے میں معاونت کریں", fastResponse: "تیز ردعمل", fastResponseDesc: "مورچا کے ساتھ اعلی کارکردگی کا تجزیہ، فوری نتائج", oneClickCopy: "ایک کلک کی کاپی", oneClickCopyDesc: "کلپ بورڈ پر پارسنگ کے نتائج کاپی کرنے کے لیے کلک کریں", autoOpenLink: "آٹو اوپن لنک", autoOpenLinkDesc: "جب URL کا پتہ چلتا ہے تو خود بخود براؤزر کھولیں" },

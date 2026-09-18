@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "Demo" },
+  demo: { title: "Demo", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "Scanner rapido per codici QR", description: "App desktop multipiattaforma costruita con Tauri + Vue 3\\ nLeggi rapidamente il contenuto del codice QR dagli appunti e dalle immagini locali", downloadNow: "Scarica ora", learnMore: "Scopri di più", appScreenshot: "Screenshot dell'app ClipQR", localFirst: "Local-first · Open source · Multipiattaforma" },
   features: { ...enUS.features, title: "Caratteristiche", clipboardRead: "Lettura diretta appunti", clipboardReadDesc: "Leggi direttamente le immagini dagli appunti e analizza i codici QR con un clic", localFile: "Documento locale", localFileDesc: "Supporta l'analisi dei codici QR dai file di immagine locali", dragDrop: "Drag & Drop", dragDropDesc: "Supporta il trascinamento dei file di immagine nella finestra per l'analisi diretta", fastResponse: "Risposta rapida", fastResponseDesc: "Analisi ad alte prestazioni con Rust, risultati immediati", oneClickCopy: "Copia con un clic", oneClickCopyDesc: "Clicca per copiare i risultati dell'analisi negli appunti", autoOpenLink: "Apri collegamento automaticamente", autoOpenLinkDesc: "Apri automaticamente il browser quando viene rilevato l'URL" },

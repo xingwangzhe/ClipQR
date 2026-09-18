@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "ਡੈਮੋ" },
+  demo: { title: "ਡੈਮੋ", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "ਤੇਜ਼ QR ਕੋਡ ਸਕੈਨਰ", description: "Tauri + Vue 3\\ n ਨਾਲ ਬਣਾਇਆ ਕਰਾਸ-ਪਲੇਟਫਾਰਮ ਡੈਸਕਟਾਪ ਐਪQuickly ਕਲਿੱਪਬੋਰਡ ਅਤੇ ਸਥਾਨਕ ਚਿੱਤਰ ਤੱਕ QR ਕੋਡ ਸਮੱਗਰੀ ਨੂੰ ਪੜ੍ਹਨ", downloadNow: "ਹੁਣ ਡਾਊਨਲੋਡ@ info: tooltip", learnMore: "ਹੋਰ ਜਾਣੋ", appScreenshot: "ਕਲਿੱਪQR ਐਪ ਸਕਰੀਨਸ਼ਾਟ", localFirst: "ਸਥਾਨਕ-ਪਹਿਲੀ · ਓਪਨ ਸਰੋਤ · ਕਰਾਸ-ਪਲੇਟਫਾਰਮ" },
   features: { ...enUS.features, title: "ਫੀਚਰ", clipboardRead: "ਕਲਿੱਪਬੋਰਡ ਡਾਇਰੈਕਟ ਪੜ੍ਹੋ", clipboardReadDesc: "ਕਲਿੱਪਬੋਰਡ ਤੋਂ ਚਿੱਤਰਾਂ ਨੂੰ ਸਿੱਧਾ ਪੜ੍ਹੋ ਅਤੇ ਇੱਕ ਕਲਿੱਕ ਨਾਲ QR ਕੋਡ ਪਾਰਸ ਕਰੋ", localFile: "ਲੋਕਲ ਫਾਇਲ", localFileDesc: "ਸਥਾਨਕ ਚਿੱਤਰ ਫਾਈਲਾਂ ਤੋਂ QR ਕੋਡ ਪਾਰਸਿੰਗ ਦਾ ਸਮਰਥਨ ਕਰੋ", dragDrop: "ਸੁੱਟੋ (D)", dragDropDesc: "ਡਾਇਰੈਕਟ ਪਾਰਸਿੰਗ ਲਈ ਵਿੰਡੋ ਵਿੱਚ ਚਿੱਤਰ ਫਾਇਲਾਂ ਖਿੱਚਣ ਲਈ ਸਹਿਯੋਗ", fastResponse: "ਤੇਜ਼ ਜਵਾਬ", fastResponseDesc: "ਰਸਟ, ਤੁਰੰਤ ਨਤੀਜੇ ਦੇ ਨਾਲ ਉੱਚ-ਪ੍ਰਦਰਸ਼ਨ ਪਾਰਸਿੰਗ", oneClickCopy: "ਇੱਕ- ਕਲਿੱਕ ਕਾਪੀ", oneClickCopyDesc: "ਕਲਿੱਪਬੋਰਡ ਉੱਤੇ ਪਾਰਸਿੰਗ ਨਤੀਜੇ ਕਾਪੀ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ", autoOpenLink: "ਆਟੋ ਓਪਨ ਲਿੰਕ", autoOpenLinkDesc: "ਜਦੋਂ URL ਖੋਜਿਆ ਜਾਵੇ ਤਾਂ ਬਰਾਊਜ਼ਰ ਆਟੋਮੈਟਿਕ ਹੀ ਖੋਲ੍ਹੋ" },

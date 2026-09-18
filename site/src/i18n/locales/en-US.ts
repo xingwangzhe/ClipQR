@@ -1,6 +1,6 @@
 export default {
   nav: {
-    github: 'GitHub'
+    github: 'GitHub', chooseLanguage: 'Choose language', mitLicense: 'MIT License'
   },
   hero: {
     subtitle: 'Quick QR Code Scanner',
@@ -8,7 +8,7 @@ export default {
     downloadNow: 'Download Now',
     learnMore: 'Learn More',
     appScreenshot: 'ClipQR App Screenshot'
-    ,localFirst: 'Local-first · Open source · Cross-platform'
+    ,localFirst: 'Local-first · Open source · Cross-platform', eyebrow: 'CLIPQR / DESKTOP UTILITY', titleSuffix: 'without the detour.', visualLabel: '01 / IN ACTION', visualCaption: 'Fast QR parsing'
   },
   features: {
     title: '✨ Features',
@@ -43,7 +43,8 @@ export default {
     refundPolicy: 'Refund Policy',
     copyright: '©2026-now ClipQR. Made with ❤️'
   },
-  demo: { title: "Demo" },
+  demo: { title: 'Demo', description: 'See how ClipQR turns a local image or clipboard capture into a usable result in one focused step.' },
+  sections: { featuresNumber: '02', demoNumber: '03', downloadNumber: '04' },
   meta: {
     title: 'ClipQR - Quick QR Code Scanner',
     description: 'ClipQR - Quick QR code scanner, cross-platform desktop app, quickly read QR code content from clipboard and local images'

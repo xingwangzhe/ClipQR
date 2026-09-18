@@ -11,7 +11,7 @@ onUnmounted(() => { document.removeEventListener('click', handleClickOutside); d
 </script>
 <template>
   <div class="language-switcher">
-    <button class="switcher-btn" aria-label="Choose language" :aria-expanded="isOpen" @click.stop="isOpen = !isOpen"><span class="language-glyph">文A</span></button>
+    <button class="switcher-btn" :aria-label="$t('nav.chooseLanguage')" :aria-expanded="isOpen" @click.stop="isOpen = !isOpen"><span class="language-glyph">文A</span></button>
     <div v-if="isOpen" class="dropdown-menu" role="menu">
       <button v-for="language in languages" :key="language.code" class="dropdown-item" :class="{ active: locale === language.code }" role="menuitem" @click="selectLocale(language.code)"><span>{{ language.nativeName }}</span><small>{{ language.englishName }}</small><b v-if="locale === language.code">✓</b></button>
     </div>

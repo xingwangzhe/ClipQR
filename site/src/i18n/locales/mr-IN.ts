@@ -2,7 +2,7 @@ import enUS from './en-US'
 
 export default {
   ...enUS,
-  demo: { title: "डेमो" },
+  demo: { title: "डेमो", description: enUS.demo.description },
   nav: { ...enUS.nav, github: "GitHub" },
   hero: { ...enUS.hero, subtitle: "जलद क्यूआर कोड स्कॅनर", description: "Tauri + Vue 3 सह तयार केलेले क्रॉस - प्लॅटफॉर्म डेस्कटॉप ॲप\\ nक्लिकपणे क्लिपबोर्ड आणि स्थानिक इमेजेसमधून क्यूआर कोड कंटेंट वाचा", downloadNow: "आता डाउनलोड करा", learnMore: "अधिक जाणा", appScreenshot: "क्लिपक्यूआर अ‍ॅप स्क्रीनशॉट", localFirst: "स्थानिक - प्रथम · मुक्त स्त्रोत · क्रॉस - प्लॅटफॉर्म" },
   features: { ...enUS.features, title: "वैशिष्ट्ये:-", clipboardRead: "क्लिपबोर्ड थेट वाचा", clipboardReadDesc: "थेट क्लिपबोर्डवरून प्रतिमा वाचा आणि एका क्लिकवर क्यूआर कोड पार्स करा", localFile: "स्थानीय फाइल", localFileDesc: "स्थानिक प्रतिमा फायली क्यूआर कोड पार्स समर्थन", dragDrop: "ड्रॅग आणि ड्रॉप करा", dragDropDesc: "थेट पार्सिंग करीता चौकट करीता प्रतिमा फाइल्स ड्रॅग करण्यास समर्थन द्या", fastResponse: "जलद प्रतिसाद", fastResponseDesc: "गंज, त्वरित परिणामांसह उच्च - कार्यक्षमता पार्सिंग", oneClickCopy: "एक - क्लिक प्रत", oneClickCopyDesc: "क्लिपबोर्डवर पार्सिंग परिणाम कॉपी करण्यासाठी क्लिक करा", autoOpenLink: "ऑटो उघडा लिंक", autoOpenLinkDesc: "URL आढळल्यावर स्वयंचलितपणे ब्राउझर उघडा" },
