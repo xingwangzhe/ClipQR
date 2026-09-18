@@ -1,4 +1,12 @@
 import enUS from './en-US'
 
-// Keep the complete website key tree available while localized copy is expanded.
-export default enUS
+export default {
+  ...enUS,
+  nav: { ...enUS.nav, github: "GitHub" },
+  hero: { ...enUS.hero, subtitle: "जलद क्यूआर कोड स्कॅनर", description: "Tauri + Vue 3 सह तयार केलेले क्रॉस - प्लॅटफॉर्म डेस्कटॉप ॲप\\ nक्लिकपणे क्लिपबोर्ड आणि स्थानिक इमेजेसमधून क्यूआर कोड कंटेंट वाचा", downloadNow: "आता डाउनलोड करा", learnMore: "अधिक जाणा", appScreenshot: "क्लिपक्यूआर अ‍ॅप स्क्रीनशॉट", localFirst: "स्थानिक - प्रथम · मुक्त स्त्रोत · क्रॉस - प्लॅटफॉर्म" },
+  features: { ...enUS.features, title: "वैशिष्ट्ये:-", clipboardRead: "क्लिपबोर्ड थेट वाचा", clipboardReadDesc: "थेट क्लिपबोर्डवरून प्रतिमा वाचा आणि एका क्लिकवर क्यूआर कोड पार्स करा", localFile: "स्थानीय फाइल", localFileDesc: "स्थानिक प्रतिमा फायली क्यूआर कोड पार्स समर्थन", dragDrop: "ड्रॅग आणि ड्रॉप करा", dragDropDesc: "थेट पार्सिंग करीता चौकट करीता प्रतिमा फाइल्स ड्रॅग करण्यास समर्थन द्या", fastResponse: "जलद प्रतिसाद", fastResponseDesc: "गंज, त्वरित परिणामांसह उच्च - कार्यक्षमता पार्सिंग", oneClickCopy: "एक - क्लिक प्रत", oneClickCopyDesc: "क्लिपबोर्डवर पार्सिंग परिणाम कॉपी करण्यासाठी क्लिक करा", autoOpenLink: "ऑटो उघडा लिंक", autoOpenLinkDesc: "URL आढळल्यावर स्वयंचलितपणे ब्राउझर उघडा" },
+  useCases: { ...enUS.useCases, title: "केसेस वापरा", case1: "तुमचा फोन न उघडता स्क्रीनशॉटमधून क्यूआर कोड द्रुतपणे पार्स करा", case2: "क्यूआर कोड प्रतिमा जतन केल्यानंतर सामग्री द्रुतपणे काढा", case3: "विकासादरम्यान व्युत्पन्न क्यूआर कोडची त्वरित पडताळणी करा", case4: "दस्तऐवज किंवा वेबपृष्ठ स्क्रीनशॉटमधून क्यूआर कोड माहिती काढा" },
+  download: { ...enUS.download, title: "आता 📥 डाउनलोड करा", text: "आपल्या प्लॅटफॉर्मसाठी नवीनतम आवृत्ती डाउनलोड करण्यासाठी GitHub रिलीझ पृष्ठावर जा", latestVersion: "नवीनतम आवृत्ती डाउनलोड करा" },
+  footer: { ...enUS.footer, privacyPolicy: "गोपनीयता धोरण", termsOfService: "सेवा अटी", refundPolicy: "परतावा धोरण", copyright: "© 2026 - आता क्लिपक्यूआर. सह बनविलेले ❤️" },
+  meta: { ...enUS.meta, title: "क्लिपक्यूआर - द्रुत क्यूआर कोड स्कॅनर", description: "क्लिपक्यूआर - क्विक क्यूआर कोड स्कॅनर, क्रॉस - प्लॅटफॉर्म डेस्कटॉप अॅप, क्लिपबोर्ड आणि स्थानिक प्रतिमा क्यूआर कोड सामग्री द्रुतपणे वाचा" },
+}

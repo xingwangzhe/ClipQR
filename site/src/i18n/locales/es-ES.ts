@@ -1,4 +1,12 @@
 import enUS from './en-US'
 
-// Keep the complete website key tree available while localized copy is expanded.
-export default enUS
+export default {
+  ...enUS,
+  nav: { ...enUS.nav, github: "GitHub" },
+  hero: { ...enUS.hero, subtitle: "Quick QR Code Barcode Scanner", description: "Aplicación de escritorio multiplataforma creada con Tauri + Vue 3\\ nLeerrápidamente el contenido del código QR del portapapeles y las imágenes locales", downloadNow: "Descargar ahora", learnMore: "Descubre más", appScreenshot: "Captura de pantalla de la aplicación ClipQR", localFirst: "Local-first · Código abierto · Multiplataforma" },
+  features: { ...enUS.features, title: " Características ", clipboardRead: "Lectura directa del portapapeles", clipboardReadDesc: "Lee directamente las imágenes del portapapeles y analiza los códigos QR con un solo clic", localFile: "Archivo local", localFileDesc: "Admite el análisis de códigos QR de archivos de imagen locales", dragDrop: "Arrastrar y Soltar", dragDropDesc: "Admite arrastrar archivos de imagen a la ventana para el análisis directo", fastResponse: "Contesta rápido", fastResponseDesc: "Análisis de alto rendimiento con óxido, resultados instantáneos", oneClickCopy: "One-Click Copy", oneClickCopyDesc: "Haga clic para copiar los resultados del análisis al portapapeles", autoOpenLink: "Abrir enlace automáticamente", autoOpenLinkDesc: "Abrir automáticamente el navegador cuando se detecta una URL" },
+  useCases: { ...enUS.useCases, title: "Casos de uso", case1: "Analiza rápidamente los códigos QR de las capturas de pantalla sin abrir el teléfono", case2: "Extraer contenido rápidamente después de guardar imágenes de códigos QR", case3: "Verificar rápidamente los códigos QR generados durante el desarrollo", case4: "Extraer información de códigos QR de capturas de pantalla de documentos o páginas web" },
+  download: { ...enUS.download, title: "Descargar ahora", text: "Accede a la página de lanzamientos de GitHub para descargar la última versión de tu plataforma", latestVersion: "DESCARGAR LA ÚLTIMA VERSIÓN" },
+  footer: { ...enUS.footer, privacyPolicy: "Política de privacidad", termsOfService: "Términos del servicio", refundPolicy: "Política de reembolso", copyright: "©2026-ahora ClipQR. Hecho con ❤️" },
+  meta: { ...enUS.meta, title: "ClipQR - Escáner rápido de códigos QR", description: "ClipQR - Escáner rápido de códigos QR, aplicación de escritorio multiplataforma, lee rápidamente el contenido del código QR del portapapeles y las imágenes locales" },
+}
