@@ -12,8 +12,8 @@ function detectLocale(): string {
 
 export const i18n = createI18n({
   legacy: false,
-  locale: detectLocale(),
-  fallbackLocale: 'zh-CN',
+  locale: 'en-US',
+  fallbackLocale: 'en-US',
   messages: {
     'zh-CN': zhCN,
     'en-US': enUS,
@@ -25,17 +25,9 @@ export function t(key: string): string {
 }
 
 export async function initLocale(): Promise<void> {
-  try {
-    const systemLocale = await osLocale()
-    if (systemLocale) {
-      const locale = systemLocale.startsWith('zh') ? 'zh-CN' :
-                     systemLocale.startsWith('en') ? 'en-US' :
-                     detectLocale()
-      i18n.global.locale.value = locale as 'zh-CN' | 'en-US'
-    }
-  } catch (e) {
-    console.error('Failed to get system locale:', e)
-  }
+  // Keep the first launch predictable for screenshots, docs, and cross-platform builds.
+  // Users can still switch language from the app toolbar.
+  try { await osLocale() } catch (e) { console.error('Failed to read system locale:', e) }
 }
 
 export function setLocale(locale: 'zh-CN' | 'en-US') {
