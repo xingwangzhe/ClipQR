@@ -1,6 +1,6 @@
 [package]
 name = "clipqr"
-version = "0.2.0"
+version = "0.2.1"
 description = "ClipQR - 快捷二维码解析工具"
 authors = ["xingwangzhe"]
 license = "MIT"
@@ -26,6 +26,7 @@ tauri-plugin-process = "2"
 tauri-plugin-opener = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
+tauri-plugin-notification = "2"
 image = "0.24"
 bardecoder = "0.5"
 bitvec = "1"

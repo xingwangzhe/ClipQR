@@ -18,6 +18,7 @@
     "clipboard-manager:allow-read-text",
     "dialog:default",
     "dialog:allow-open",
+    "notification:default",
     "core:window:allow-show"
   ]
 }
