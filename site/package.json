@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "check:i18n": "bun ../scripts/check-locales.ts",
     "preview": "vite preview"
   },
   "dependencies": {

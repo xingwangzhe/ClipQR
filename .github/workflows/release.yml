@@ -123,6 +123,13 @@ jobs:
       - name: 前端类型检查与生产构建
         run: bun run build
 
+      - name: 校验应用与官网语言目录
+        run: bun run check:i18n
+
+      - name: 构建官网
+        working-directory: site
+        run: bun install --frozen-lockfile && bun run build
+
       - name: Rust 依赖检查
         if: matrix.platform == 'ubuntu-22.04'
         run: cargo check --manifest-path src-tauri/Cargo.toml
