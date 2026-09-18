@@ -1,7 +1,9 @@
 export default {
   app: {
+    eyebrow: 'Desktop QR utility', title: 'Decode the moment.', titleAccent: 'Keep it moving.', website: 'Website', inputLabel: 'Choose an input', dropHint: 'or drag an image anywhere', clipboardMeta: 'Read the latest image', fileMeta: 'Browse local images', working: 'Decoding image…', resultLabel: 'Decoded result', ready: 'Ready', copied: 'Copied', copyResult: 'Copy result', footer: 'Fast, private, local-first QR parsing', version: 'v0.2.1',
     desc: 'Drag & drop a QR code image or read from clipboard to decode',
   },
+  notice: { decoded: 'QR code decoded successfully', noQr: 'No QR code found in this image', failed: 'Could not decode this input', copied: 'Result copied to clipboard' },
   fileButton: {
     selectFile: 'Select File',
     result: 'Result:',

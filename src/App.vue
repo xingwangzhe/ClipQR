@@ -1,90 +1,73 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Desc from './components/Desc.vue'
-import HomeButton from './components/HomeButton.vue'
-import { copyToClipboard } from './utils/qr'
+import { open } from '@tauri-apps/plugin-dialog'
+import { sendNotification } from '@tauri-apps/plugin-notification'
+import { copyToClipboard, parseClipboardImage, parseFile, processQrContent } from './utils/qr'
 import { initFileDrop } from './utils/drag'
-import { setLocale } from './i18n'
 import { rebuildTray } from './tray'
+import { setLocale } from './i18n'
 
 const { t, locale } = useI18n()
-
-const isDragging = ref(false)
-const qrResult = ref<string | null>(null)
+const result = ref<string | null>(null)
+const busy = ref(false)
+const dragging = ref(false)
 const copied = ref(false)
-
+const toast = ref<{ kind: string; text: string } | null>(null)
+let timer: ReturnType<typeof setTimeout> | undefined
 let unlistens: Array<() => void> = []
 
+function notify(kind: string, text: string) {
+  toast.value = { kind, text }
+  if (timer) clearTimeout(timer)
+  timer = setTimeout(() => { toast.value = null }, 3200)
+  try { sendNotification({ title: 'ClipQR', body: text }) } catch { /* UI toast remains available if system notifications are unavailable. */ }
+}
+
+async function decode(run: () => Promise<string | null>) {
+  busy.value = true; result.value = null
+  try {
+    const value = await run()
+    if (!value) notify('info', t('notice.noQr'))
+    else { result.value = value; await processQrContent(value); notify('success', t('notice.decoded')) }
+  } catch (error) { console.error(error); notify('error', t('notice.failed')) }
+  finally { busy.value = false }
+}
+const readClipboard = () => decode(parseClipboardImage)
+async function selectFile() {
+  const path = await open({ multiple: false, filters: [{ name: t('fileButton.dialogFilter'), extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'] }] })
+  if (!path || Array.isArray(path)) return
+  await decode(() => parseFile(path))
+}
 async function copyResult() {
-  if (!qrResult.value) return
-  await copyToClipboard(qrResult.value)
-  copied.value = true
-  setTimeout(() => {
-    copied.value = false
-  }, 2000)
+  if (!result.value) return
+  await copyToClipboard(result.value); copied.value = true; notify('success', t('notice.copied'))
+  setTimeout(() => { copied.value = false }, 1800)
 }
-
-async function toggleLocale() {
-  const newLocale = locale.value === 'zh-CN' ? 'en-US' : 'zh-CN'
-  setLocale(newLocale)
-  await rebuildTray()
-}
-
+async function toggleLocale() { setLocale(locale.value === 'zh-CN' ? 'en-US' : 'zh-CN'); await rebuildTray() }
 onMounted(async () => {
   unlistens = await initFileDrop({
-    onResult: (result) => {
-      if (result) {
-        qrResult.value = result
-      } else {
-        qrResult.value = t('appMain.noQrFound')
-      }
-    },
-    onDragStateChange: (state) => {
-      isDragging.value = state
-    }
+    onResult: (value) => { if (value) { result.value = value; notify('success', t('notice.decoded')) } else notify('info', t('notice.noQr')) },
+    onDragStateChange: (value) => { dragging.value = value },
   })
 })
-
-onUnmounted(() => {
-  unlistens.forEach(unlisten => unlisten())
-})
+onUnmounted(() => unlistens.forEach((unlisten) => unlisten()))
 </script>
 
 <template>
-  <div
-    class="flex flex-col items-center min-h-[80vh] justify-center space-y-12 relative"
-  >
-    <div class="absolute top-4 right-4 z-10">
-      <button
-        @click="toggleLocale"
-        class="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-colors cursor-pointer"
-      >
-        {{ locale === 'zh-CN' ? 'English' : '中文' }}
-      </button>
-    </div>
-
-    <div
-      v-if="isDragging"
-      class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded-lg z-50 flex items-center justify-center pointer-events-none"
-    >
-      <p class="text-xl font-medium text-primary">{{ $t('dragDrop.dropToParse') }}</p>
-    </div>
-
-    <Desc />
-    <HomeButton />
-
-    <div v-if="qrResult" class="w-full max-w-md">
-      <div class="bg-surface-alt rounded-lg p-4 border border-border">
-        <p class="text-sm text-secondary mb-2">{{ $t('appMain.result') }}</p>
-        <p class="text-primary break-all mb-4">{{ qrResult }}</p>
-        <button
-          @click="copyResult"
-          class="w-full py-2 px-4 bg-primary text-on-primary rounded-lg hover:opacity-90 transition-opacity cursor-pointer"
-        >
-          {{ copied ? $t('appMain.copied') : $t('appMain.copy') }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <main class="app-shell">
+    <div class="ambient ambient-a" /><div class="ambient ambient-b" />
+    <header class="topbar">
+      <a class="brand" href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer"><span class="brand-mark"><span /></span>ClipQR</a>
+      <nav><a href="https://clipqr.needhelp.icu/" target="_blank" rel="noreferrer">{{ t('app.website') }} ↗</a><a href="https://github.com/xingwangzhe/ClipQR" target="_blank" rel="noreferrer">GitHub ↗</a><button class="lang" @click="toggleLocale">{{ locale === 'zh-CN' ? 'EN' : '中' }}</button></nav>
+    </header>
+    <section class="hero"><div class="eyebrow"><i />{{ t('app.eyebrow') }}</div><h1>{{ t('app.title') }}<br><em>{{ t('app.titleAccent') }}</em></h1><p>{{ t('app.desc') }}</p></section>
+    <section class="workspace" :class="{ dragging }"><div class="scan-line" /><div class="workspace-head"><span><b>01</b>{{ t('app.inputLabel') }}</span><small>{{ t('app.dropHint') }}</small></div>
+      <div class="actions"><button class="action primary" :disabled="busy" @click="readClipboard"><strong>⌁</strong><span>{{ t('readPaste.readClipboard') }}<small>{{ t('app.clipboardMeta') }} <b>→</b></small></span></button><button class="action" :disabled="busy" @click="selectFile"><strong>＋</strong><span>{{ t('fileButton.selectFile') }}<small>{{ t('app.fileMeta') }} <b>→</b></small></span></button></div>
+      <div v-if="dragging" class="drop-overlay">↓　{{ t('dragDrop.dropToParse') }}</div><div v-if="busy" class="working"><i />{{ t('app.working') }}</div>
+    </section>
+    <section v-if="result" class="result-card"><div class="workspace-head"><span><b>02</b>{{ t('app.resultLabel') }}</span><small class="ready">{{ t('app.ready') }}</small></div><p>{{ result }}</p><button class="copy" @click="copyResult">{{ copied ? t('app.copied') : t('app.copyResult') }} <small>⌘ C</small></button></section>
+    <footer><span>ClipQR · {{ t('app.footer') }}</span><i />{{ t('app.version') }}</footer>
+    <Transition name="toast"><div v-if="toast" class="toast" :class="toast.kind"><b>{{ toast.kind === 'success' ? '✓' : toast.kind === 'error' ? '!' : 'i' }}</b>{{ toast.text }}</div></Transition>
+  </main>
 </template>
