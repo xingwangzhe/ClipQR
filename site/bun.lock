@@ -5,13 +5,13 @@
     "": {
       "name": "site",
       "dependencies": {
+        "@vue/tsconfig": "^0.9.1",
         "vue": "^3.5.43",
         "vue-i18n": "^11.4.12",
         "vue-router": "^5.3.1",
       },
       "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.9",
-        "@vue/tsconfig": "^0.9.1",
         "typescript": "~7.0.2",
         "vite": "^8.3.0",
       },
