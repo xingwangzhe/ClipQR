@@ -1,0 +1,45 @@
+name: Vite website CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'scripts/check-locales.ts'
+      - 'scripts/test-site-locale.ts'
+      - 'package.json'
+      - '.github/workflows/vite-ci.yml'
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'scripts/check-locales.ts'
+      - 'scripts/test-site-locale.ts'
+      - 'package.json'
+      - '.github/workflows/vite-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - name: Install website dependencies
+        working-directory: site
+        run: bun install --frozen-lockfile
+      - name: Build React website with Vite
+        working-directory: site
+        run: bun run build
+      - name: Check translations
+        run: bun run check:i18n
+      - name: Test system language matching
+        run: bun run test:site-locale
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clipqr-website
+          path: site/dist/

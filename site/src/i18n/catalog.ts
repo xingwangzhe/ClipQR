@@ -23,11 +23,27 @@ export const languages = [
 ] as const
 export type Locale = (typeof languages)[number]['code']
 export const supportedLocales = languages.map(({ code }) => code) as Locale[]
+function matchLocale(input: string | undefined): Locale | undefined {
+  if (!input) return undefined
+  let normalized = input.trim().replaceAll('_', '-')
+  try { normalized = Intl.getCanonicalLocales(normalized)[0] ?? normalized } catch { return undefined }
+  const tag = normalized.toLowerCase()
+  const base = tag.split('-')[0]
+  if (base === 'zh') {
+    if (tag.includes('hant') || /-(tw|hk|mo)$/.test(tag)) return 'zh-TW'
+    return 'zh-CN'
+  }
+  return languages.find(({ code }) => code.toLowerCase() === tag)?.code
+    ?? languages.find(({ base: languageBase }) => languageBase === base)?.code
+}
 export function resolveLocale(input: string | undefined): Locale {
-  if (!input) return 'en-US'
-  const normalized = input.replace('_', '-').toLowerCase()
-  return languages.find(({ code }) => code.toLowerCase() === normalized)?.code
-    ?? languages.find(({ base }) => base === normalized.split('-')[0])?.code
-    ?? 'en-US'
+  return matchLocale(input) ?? 'en-US'
+}
+export function resolvePreferredLocale(inputs: readonly string[]): Locale {
+  for (const input of inputs) {
+    const match = matchLocale(input)
+    if (match) return match
+  }
+  return 'en-US'
 }
 export function directionFor(locale: Locale) { return languages.find(({ code }) => code === locale)?.dir ?? 'ltr' }

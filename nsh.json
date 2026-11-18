@@ -1,0 +1,24 @@
+{
+  "name": "ClipQR",
+  "id": "icu.needhelp.clipqr",
+  "version": "1.0.0",
+  "build": 1,
+  "rust": ".",
+  "capabilities": { "application": true, "clipboard": true, "picker": true, "openUrl": { "schemes": ["http", "https"] }, "statusBar": true },
+  "appearance": "dark",
+  "icon": "site/public/clipqr-icon.png",
+  "singleInstance": true,
+  "fileTypes": [
+    {
+      "name": "QR images",
+      "extensions": ["png", "jpg", "jpeg", "webp", "gif", "bmp"],
+      "mimeTypes": ["image/png", "image/jpeg", "image/webp", "image/gif", "image/bmp"]
+    }
+  ],
+  "window": {
+    "title": "ClipQR",
+    "defaultSize": { "width": 820, "height": 700 },
+    "minSize": { "width": 580, "height": 560 },
+    "closeOnPress": false
+  }
+}

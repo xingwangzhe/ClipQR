@@ -27,8 +27,8 @@ const calledKeys = async (files: string[]) => {
 
 const app = await localeKeys('src/locales/*.ts')
 const site = await localeKeys('site/src/i18n/locales/*.ts')
-const appSource = [...new Bun.Glob('src/**/*.{ts,vue}').scanSync('.')]
-const siteSource = [...new Bun.Glob('site/src/**/*.{ts,vue}').scanSync('.')]
+const appSource = ['App.tsx', ...new Bun.Glob('src/**/*.{ts,tsx,vue}').scanSync('.')]
+const siteSource = [...new Bun.Glob('site/src/**/*.{ts,tsx,vue}').scanSync('.')]
 const errors: string[] = []
 
 async function validate(name: string, data: Awaited<ReturnType<typeof localeKeys>>, sourceFiles: string[], required: string[]) {
@@ -50,6 +50,16 @@ async function validate(name: string, data: Awaited<ReturnType<typeof localeKeys
 
 await validate('app', app, appSource, ['app.chooseLanguage', 'app.github', 'app.languageMenu', 'app.externalLink', 'app.dropIndicator', 'app.copyShortcut'])
 await validate('site', site, siteSource, ['nav.chooseLanguage', 'nav.github', 'nav.mitLicense', 'hero.eyebrow', 'hero.titleSuffix', 'hero.visualLabel', 'hero.visualCaption', 'demo.title', 'demo.description', 'sections.featuresNumber', 'sections.demoNumber', 'sections.downloadNumber'])
+
+const nshLocales = await Bun.file('locales/clipqr.json').json() as Record<string, unknown>
+if (nshLocales._version !== 2) errors.push('NSH locales/clipqr.json must use rust-i18n format version 2')
+for (const [file, messages] of app.modules) {
+  const locale = file.split('/').at(-1)!.replace(/\.ts$/, '')
+  for (const [key, value] of Object.entries(flatten(messages))) {
+    const localized = nshLocales[key] as Record<string, unknown> | undefined
+    if (!localized || localized[locale] !== value) errors.push(`NSH locale ${locale} is out of sync for ${key}`)
+  }
+}
 
 if (errors.length) {
   console.error(errors.map((error) => `✗ ${error}`).join('\n'))

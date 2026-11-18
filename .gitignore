@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+.nsh/
+.codegraph/
+target/
 
 # Editor directories and files
 .claude
@@ -25,24 +28,13 @@ dist-ssr
 *.sln
 *.sw?
 
-# Tauri
-src-tauri/target/
-AppBundle/
-.tauri-cli/
-
-# Tauri build outputs
-*.app/
-*.dmg
-*.msi
-*.exe
-*.msix
-*.AppImage
-*.deb
-*.rpm
-src-tauri/gen/
+# Local build and test artifacts
+/work/
+/test-results/
 
 # Rust
 Cargo.lock
+!Cargo.lock
 *.rlib
 
 # macOS

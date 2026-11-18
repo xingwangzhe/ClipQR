@@ -1,0 +1,68 @@
+name: NSH application CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'App.tsx'
+      - 'App.test.tsx'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'nsh.json'
+      - 'tray.svg'
+      - 'site/public/clipqr-icon.png'
+      - 'locales/**'
+      - 'src/lib.rs'
+      - 'src/locales/**'
+      - 'scripts/check-locales.ts'
+      - 'scripts/generate-nsh-locales.ts'
+      - 'package.json'
+      - '.github/workflows/nsh-ci.yml'
+  pull_request:
+    paths:
+      - 'App.tsx'
+      - 'App.test.tsx'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'nsh.json'
+      - 'tray.svg'
+      - 'site/public/clipqr-icon.png'
+      - 'locales/**'
+      - 'src/lib.rs'
+      - 'src/locales/**'
+      - 'scripts/check-locales.ts'
+      - 'scripts/generate-nsh-locales.ts'
+      - 'package.json'
+      - '.github/workflows/nsh-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Linux build dependencies
+        run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
+      - name: Install NSH
+        run: curl -fsSL https://nsh.dev/install.sh | sh
+      - name: Type-check NSH app
+        run: nsh check App.tsx
+      - name: Run NSH tests
+        run: mkdir -p test-results && nsh test App.test.tsx --junit test-results/nsh.xml
+      - name: Build NSH app
+        run: nsh build App.tsx --release
+      - name: Check locale catalogs
+        run: bun run check:i18n
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nsh-test-results
+          path: test-results/nsh.xml
+          if-no-files-found: ignore

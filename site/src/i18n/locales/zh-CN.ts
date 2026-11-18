@@ -4,7 +4,7 @@ export default {
   },
   hero: {
     subtitle: '快捷二维码解析工具',
-    description: '基于 Tauri + Vue 3 开发的跨平台桌面应用\n快速读取剪贴板和本地图片中的二维码内容',
+    description: '基于 Native Shell 开发的跨平台桌面应用\n快速读取剪贴板和本地图片中的二维码内容',
     downloadNow: '立即下载',
     learnMore: '了解更多',
     appScreenshot: 'ClipQR 应用截图'

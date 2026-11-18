@@ -1,0 +1,15 @@
+[package]
+name = "clipqr-native"
+version = "1.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+nsh-core = "0.6.0"
+image = { version = "0.24.9", default-features = false, features = ["png", "jpeg", "gif", "bmp", "webp"] }
+bardecoder = "0.5.0"
+
+[dev-dependencies]
+qrcodegen = "1.8.0"

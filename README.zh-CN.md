@@ -1,97 +1,66 @@
-# ClipQR - 快捷二维码解析工具
+# ClipQR
 
-[English](README.md) | [中文](README.zh-CN.md)
+ClipQR 使用 [Native Shell](https://nsh.dev/zh-CN/) 构建，支持多个桌面与移动平台。可从剪贴板、本地图片或拖入窗口的图片中读取二维码。解码在设备本地完成。
 
----
+[网站](https://clipqr.needhelp.icu/) · [发行版本](https://github.com/xingwangzhe/ClipQR/releases)
 
-[https://clipqr.needhelp.icu/](https://clipqr.needhelp.icu/)
-
-![应用截图](https://clipqr.needhelp.icu/%E5%BA%94%E7%94%A8%E6%88%AA%E5%9B%BE.png)
-
-https://github.com/user-attachments/assets/22056d1a-0862-4003-976c-2522bfb05c1c
-
-ClipQR 是一个跨平台桌面二维码解析应用，基于 Tauri + Vue 3 开发，可以快速读取剪贴板和本地图片中的二维码内容。
+![ClipQR 在 GNOME 中运行](https://clipqr.needhelp.icu/%E5%BA%94%E7%94%A8%E6%88%AA%E5%9B%BE.png)
 
 ## 功能
 
-- **剪贴板直读**：直接读取剪贴板中的图片，一键解析二维码
-- **本地文件**：支持从本地图片文件解析二维码
-- **拖拽解析**：拖拽图片文件到窗口直接解析
-- **一键复制**：点击复制解析结果到剪贴板
-- **自动打开链接**：识别到 URL 自动在浏览器打开
-- **支持多种协议**：http/https、file、mailto 等
-- **系统托盘**：最小化到系统托盘，随时可用
-- **跨平台**：支持 Windows、macOS、Linux
+- 读取剪贴板图片、本地图片和拖入窗口的图片中的二维码。
+- 复制解析结果，或安全地打开 HTTP、HTTPS 链接。
+- 使用系统托盘快速访问；按 `Ctrl/⌘ + Shift + V` 读取剪贴板。
+- 提供 14 种应用主题，默认 Dark；网站固定使用暗色主题。
+- 默认跟随系统语言，也可从 21 种应用语言中选择。
+- 使用 Native Shell 构建 Linux、macOS、Windows、iOS、Android 和 Web 版本。
 
-## 技术栈
+## 构建与验证
 
-- **前端**：Vue 3 + TypeScript + Vite + Tailwind CSS
-- **后端**：Rust + Tauri 2
-- **二维码解析**：bardecoder (基于 zxing，Rust 原生)
-- **图片处理**：image crate
+安装 [Native Shell](https://nsh.dev/zh-CN/) 和 [Bun](https://bun.sh/)，然后运行：
 
-## 下载安装
-
-从 [Releases](https://github.com/xingwangzhe/ClipQR/releases) 页面下载对应平台的最新版本。
-
-### 手动编译
-
-需要提前安装：
-- Rust 开发环境
-- Bun（参考 [Bun 官方文档](https://bun.sh/docs/installation)）
-- Tauri 系统依赖（参考 [Tauri 环境设置](https://tauri.app/start/prerequisites/)）
-
-编译步骤：
-
-```bash
-git clone https://github.com/xingwangzhe/ClipQR.git
-cd ClipQR
-bun install
-bun run tauri build
+```sh
+nsh check App.tsx
+nsh test App.test.tsx
+nsh build App.tsx --release
 ```
 
-## 使用说明
+修改应用语言源文件后，运行 `bun run sync:i18n` 更新随应用打包的 NSH 语言文件。
 
-1. **剪贴板读取**：截图或复制包含二维码的图片到剪贴板，点击"读取剪贴板"或托盘菜单，自动解析
-2. **本地文件**：点击"选择本地图片文件"，选择图片文件后解析
-3. **拖拽**：直接将图片文件拖到应用窗口，自动解析
-4. 如果解析结果是 URL，会自动在浏览器打开
-5. 关闭窗口会最小化到系统托盘，完全退出需要从托盘菜单选择"完全退出"
+使用 Vite 构建 React 网站：
 
-## 使用场景
+```sh
+cd site
+bun install --frozen-lockfile
+bun run build
+```
 
-- 解析电脑截图中的二维码，不需要手机
-- 从保存的二维码图片中提取链接或文本
-- 开发过程中验证生成的二维码
-- 从文档或网页截图中提取二维码信息
+打包桌面版本：
+
+```sh
+bun run package:linux
+bun run package:macos
+bun run package:windows
+```
+
+## CI 与发行
+
+- `.github/workflows/nsh-ci.yml` 执行 NSH 类型检查、应用测试、发布构建和语言文件检查。
+- `.github/workflows/vite-ci.yml` 安装网站锁文件依赖，运行 Vite 构建和翻译检查。
+- `.github/workflows/release.yml` 为支持的平台打包，并在推送 `v1.0.0` 等版本标签后发布 GitHub Release。
 
 ## 项目结构
 
+```text
+App.tsx                  Native Shell 应用
+App.test.tsx             Native Shell 界面测试
+src/lib.rs               本地二维码解码模块
+src/locales/             应用翻译源文件
+locales/clipqr.json      随应用打包的 NSH 翻译
+site/                    React + Vite 网站
+.github/workflows/       NSH、Vite 和发行工作流
 ```
-src/              # 前端代码
-  components/      # Vue 组件
-  utils/           # 工具函数
-  App.vue          # 根组件
-  main.ts          # 入口文件
-src-tauri/        # Rust 后端
-  src/
-    lib.rs         # 二维码解析逻辑
-  Cargo.toml       # 依赖配置
-  tauri.conf.json  # Tauri 配置
-```
-
-## 捐赠支持
-
-如果这个项目对你有帮助，欢迎请作者喝杯咖啡 ☕
-
-| 微信支付 | 支付宝 |
-|:-------:|:------:|
-| ![微信支付](https://xingwangzhe.fun/wechat_pay.webp) | ![支付宝](https://xingwangzhe.fun/ali_pay.webp) |
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request。
 
 ## 许可证
 
-MIT License
+MIT

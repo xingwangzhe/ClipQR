@@ -1,152 +1,186 @@
-name: "发布 ClipQR"
+name: ClipQR release
 
 on:
   push:
-    tags:
-      - "v*"
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag name to release (e.g. v1.0.0)"
-        required: false
+        description: Existing or new release tag, for example v1.0.0
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 jobs:
-  validate-tag:
-    name: 校验 Tag 来源并提取版本
-    runs-on: ubuntu-22.04
+  validate:
+    runs-on: ubuntu-24.04
     outputs:
       tag: ${{ steps.meta.outputs.tag }}
       version: ${{ steps.meta.outputs.version }}
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: 校验 Tag 指向 main 分支提交
-        run: |
-          set -euo pipefail
-          git fetch origin main --no-tags
-          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
-            echo "❌ 当前 tag (${GITHUB_REF_NAME}) 对应提交不在 main 分支上"
-            exit 1
-          fi
-          echo "✅ Tag 来源校验通过"
-
-      - name: 提取版本信息
+      - name: Validate release tag
         id: meta
+        shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAG="${{ inputs.tag }}"
-            if [ -z "$TAG" ]; then
-              echo "❌ 手动触发需要输入 tag 名称"
-              exit 1
-            fi
-          else
-            TAG="${GITHUB_REF_NAME}"
-          fi
-          VERSION="$(echo "$TAG" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)"
-          if [ -z "$VERSION" ]; then
-            echo "❌ 无法从 tag 提取版本号: $TAG"
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then TAG='${{ inputs.tag }}'; else TAG="$GITHUB_REF_NAME"; fi
+          VERSION="${TAG#v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "Invalid release tag: $TAG"; exit 1; fi
+          CONFIG_VERSION="$(jq -r '.version' nsh.json)"
+          PACKAGE_VERSION="$(jq -r '.version' package.json)"
+          if [[ "$VERSION" != "$CONFIG_VERSION" || "$VERSION" != "$PACKAGE_VERSION" ]]; then
+            echo "Tag $TAG must match nsh.json ($CONFIG_VERSION) and package.json ($PACKAGE_VERSION)"
             exit 1
           fi
-
+          git fetch origin main --no-tags
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            git merge-base --is-ancestor "$TAG" origin/main || { echo "Tag must point to main"; exit 1; }
+          else
+            git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "Release commit must be on main"; exit 1; }
+          fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "✅ 发布版本: $VERSION"
 
-  publish-tauri:
-    name: 构建并发布桌面端
-    needs: validate-tag
-    permissions:
-      contents: write
+  verify-nsh:
+    needs: validate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
+      - name: Install NSH
+        run: curl -fsSL https://nsh.dev/install.sh | sh
+      - run: nsh check App.tsx
+      - run: mkdir -p test-results && nsh test App.test.tsx --junit test-results/nsh.xml
+      - run: nsh build App.tsx --release
+
+  verify-website:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - name: Install React website dependencies
+        working-directory: site
+        run: bun install --frozen-lockfile
+      - name: Build React website with Vite
+        working-directory: site
+        run: bun run build
+      - name: Check translations
+        run: bun run check:i18n
+      - name: Test system language matching
+        run: bun run test:site-locale
+
+  package:
+    needs: [validate, verify-nsh, verify-website]
     strategy:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest"
-            args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest"
-            args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04"
-            args: ""
-            arch: "amd64"
-          - platform: "ubuntu-22.04-arm"
-            args: ""
-            arch: "arm64"
-          - platform: "windows-latest"
-            args: ""
-            arch: "amd64"
-          - platform: "windows-11-arm"
-            args: ""
-            arch: "arm64"
-
-    runs-on: ${{ matrix.platform }}
+          - runner: ubuntu-24.04
+            target: linux
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            target: linux
+            arch: aarch64
+          - runner: macos-latest
+            target: macos
+            arch: native
+          - runner: macos-latest
+            target: ios-simulator
+            arch: arm64
+          - runner: windows-latest
+            target: windows
+            arch: x86_64
+          - runner: ubuntu-24.04
+            target: android
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v6
-
-      - name: 安装系统依赖 (Ubuntu 专用)
-        if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm'
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Linux build dependencies
+        if: startsWith(matrix.runner, 'ubuntu-')
+        run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
+      - name: Set up Java
+        if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Set up Android SDK
+        if: matrix.target == 'android'
+        uses: android-actions/setup-android@v3
+      - name: Install Android build tools
+        if: matrix.target == 'android'
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.1" "platform-tools" "ndk;27.2.12479018"
+      - name: Install Rust cross-compilation targets
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev libdbus-1-dev libnotify-dev patchelf xdg-utils nasm
-
-      - name: 安装 bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.4.2"
-
-      - name: 安装 Rust 工具链 (默认目标)
-        if: ${{ matrix.args == '' }}
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: 安装 Rust 工具链 (macOS 交叉编译)
-        if: ${{ matrix.args != '' }}
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
-
-      - name: 缓存 Rust 编译产物
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: "./src-tauri -> target"
-
-      - name: 安装前端依赖
+          case '${{ matrix.target }}' in
+            android) rustup target add aarch64-linux-android ;;
+            ios-simulator) rustup target add aarch64-apple-ios-sim ;;
+          esac
+      - name: Install NSH (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: curl -fsSL https://nsh.dev/install.sh | sh
+      - name: Install NSH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          bun install --frozen-lockfile
+          irm https://nsh.dev/install.ps1 | iex
+          "$env:LOCALAPPDATA\nsh\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Package app
+        shell: bash
+        run: nsh package App.tsx --target '${{ matrix.target }}' --app-version '${{ needs.validate.outputs.version }}' --build 1
+      - name: Create Apple app archive
+        if: matrix.target == 'macos' || matrix.target == 'ios-simulator'
+        shell: bash
+        run: |
+          mkdir -p release-out
+          bundle="$(find .nsh/out -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$bundle"
+          ditto -c -k --sequesterRsrc --keepParent "$bundle" "release-out/ClipQR-${{ matrix.target }}.zip"
+      - name: Collect package
+        shell: bash
+        run: |
+          mkdir -p release-out
+          if [[ '${{ matrix.target }}' != 'macos' && '${{ matrix.target }}' != 'ios-simulator' ]]; then
+            find .nsh/out -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*.apk' -o -name '*.aab' \) -print -exec cp {} release-out/ \;
+          fi
+          test -n "$(find release-out -type f -print -quit)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clipqr-${{ matrix.target }}-${{ matrix.arch }}
+          path: release-out/*
+          if-no-files-found: error
+          retention-days: 7
 
-      - name: 前端类型检查与生产构建
-        run: bun run build
-
-      - name: 校验应用与官网语言目录
-        run: bun run check:i18n
-
-      - name: 构建官网
-        working-directory: site
-        run: bun install --frozen-lockfile && bun run build
-
-      - name: Rust 依赖检查
-        if: matrix.platform == 'ubuntu-22.04'
-        run: cargo check --manifest-path src-tauri/Cargo.toml
-
-      - name: 构建并发布
-        uses: tauri-apps/tauri-action@v0
+  publish:
+    needs: [validate, package]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - name: Publish GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: ${{ needs.validate-tag.outputs.tag }}
-          releaseName: "ClipQR v${{ needs.validate-tag.outputs.version }}"
-          releaseBody: |
-            ## ClipQR v${{ needs.validate-tag.outputs.version }}
-
-            剪贴板二维码自动识别工具，支持多平台。
-
-            自动发布构建产物。
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.validate.outputs.tag }}
+          VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          gh release create "$TAG" release-assets/* \
+            --target "$GITHUB_SHA" \
+            --title "ClipQR v$VERSION" \
+            --notes "ClipQR v$VERSION — Native Shell desktop and mobile builds, with a React website. QR decoding stays on-device."

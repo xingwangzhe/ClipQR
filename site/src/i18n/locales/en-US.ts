@@ -4,7 +4,7 @@ export default {
   },
   hero: {
     subtitle: 'Quick QR Code Scanner',
-    description: 'Cross-platform desktop app built with Tauri + Vue 3\nQuickly read QR code content from clipboard and local images',
+    description: 'Cross-platform desktop app built with Native Shell\nQuickly read QR code content from clipboard and local images',
     downloadNow: 'Download Now',
     learnMore: 'Learn More',
     appScreenshot: 'ClipQR App Screenshot'
