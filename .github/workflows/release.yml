@@ -247,7 +247,7 @@ jobs:
           NOTES="ClipQR v$VERSION — Windows x64/ARM64 ZIPs, macOS Apple silicon ZIP, and Linux x86_64/ARM64 tar.gz, .deb, .rpm, and AppImage packages. QR decoding stays on-device. Linux packages require GTK 4 and WebKitGTK 6; GNOME tray display requires AppIndicator."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" release-assets/* --clobber
-            gh release edit "$TAG" --title "ClipQR v$VERSION" --notes "$NOTES"
+            gh release edit "$TAG" --draft=false --title "ClipQR v$VERSION" --notes "$NOTES"
           else
             gh release create "$TAG" release-assets/* \
               --target "$GITHUB_SHA" \
