@@ -54,8 +54,6 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.4
-      - uses: dtolnay/rust-toolchain@stable
-      - run: sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update && sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
       - name: Install NSH
         run: curl -fsSL https://nsh.dev/install.sh | sh
       - run: nsh check App.tsx
@@ -105,10 +103,6 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v6
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Install Linux build dependencies
-        if: startsWith(matrix.runner, 'ubuntu-')
-        run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
       - name: Install NSH (Linux or macOS)
         if: runner.os != 'Windows'
         run: curl -fsSL https://nsh.dev/install.sh | sh
@@ -118,6 +112,20 @@ jobs:
         run: |
           irm https://nsh.dev/install.ps1 | iex
           "$env:LOCALAPPDATA\nsh\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Use bundled NSH runtime (Linux or macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          runtime_root="$(dirname "$(dirname "$(command -v nsh)")")/runtime"
+          test -d "$runtime_root"
+          echo "NSH_RUNTIME=$runtime_root" >> "$GITHUB_ENV"
+      - name: Use bundled NSH runtime (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $runtimeRoot = Join-Path (Split-Path (Split-Path (Get-Command nsh).Source -Parent) -Parent) 'runtime'
+          if (-not (Test-Path $runtimeRoot)) { throw "NSH runtime not found: $runtimeRoot" }
+          "NSH_RUNTIME=$runtimeRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Package app
         shell: bash
         run: nsh package App.tsx --target '${{ matrix.target }}' --app-version '${{ needs.validate.outputs.version }}' --build 1
