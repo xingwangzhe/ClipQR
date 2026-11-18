@@ -55,7 +55,7 @@ jobs:
         with:
           bun-version: 1.4.4
       - uses: dtolnay/rust-toolchain@stable
-      - run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
+      - run: sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update && sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
       - name: Install NSH
         run: curl -fsSL https://nsh.dev/install.sh | sh
       - run: nsh check App.tsx
@@ -178,8 +178,8 @@ jobs:
           fi
           EOF
           chmod 755 work/release-package/postinstall.sh work/release-package/postremove.sh
-          sudo apt-get update
-          sudo apt-get install -y libfuse2
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y libfuse2
           curl -fsSL "https://github.com/goreleaser/nfpm/releases/download/v2.49.0/nfpm_2.49.0_Linux_${NFPM_ARCH}.tar.gz" -o work/nfpm.tar.gz
           tar -xzf work/nfpm.tar.gz -C work nfpm
           NFPM_ARCH="$NFPM_ARCH" VERSION="$VERSION" work/nfpm package --config nfpm.yaml --packager deb --target "release-out/clipqr_${VERSION}_${ARCH}.deb"
