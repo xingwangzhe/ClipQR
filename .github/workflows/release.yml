@@ -93,17 +93,14 @@ jobs:
           - runner: ubuntu-24.04-arm
             target: linux
             arch: aarch64
-          - runner: macos-latest
+          - runner: macos-15
             target: macos
-            arch: native
-          - runner: macos-latest
-            target: ios-simulator
             arch: arm64
-          - runner: windows-latest
+          - runner: windows-2025
             target: windows
             arch: x86_64
-          - runner: ubuntu-24.04
-            target: android
+          - runner: windows-11-arm
+            target: windows
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
@@ -112,27 +109,6 @@ jobs:
       - name: Install Linux build dependencies
         if: startsWith(matrix.runner, 'ubuntu-')
         run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-      - name: Set up Java
-        if: matrix.target == 'android'
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-      - name: Set up Android SDK
-        if: matrix.target == 'android'
-        uses: android-actions/setup-android@v3
-        with:
-          packages: ''
-      - name: Install Android build tools
-        if: matrix.target == 'android'
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.1" "platform-tools" "ndk;27.2.12479018"
-      - name: Install Rust cross-compilation targets
-        shell: bash
-        run: |
-          case '${{ matrix.target }}' in
-            android) rustup target add aarch64-linux-android ;;
-            ios-simulator) rustup target add aarch64-apple-ios-sim ;;
-          esac
       - name: Install NSH (Linux or macOS)
         if: runner.os != 'Windows'
         run: curl -fsSL https://nsh.dev/install.sh | sh
@@ -179,7 +155,6 @@ jobs:
           EOF
           chmod 755 work/release-package/postinstall.sh work/release-package/postremove.sh
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
-          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y libfuse2
           curl -fsSL "https://github.com/goreleaser/nfpm/releases/download/v2.49.0/nfpm_2.49.0_Linux_${NFPM_ARCH}.tar.gz" -o work/nfpm.tar.gz
           tar -xzf work/nfpm.tar.gz -C work nfpm
           NFPM_ARCH="$NFPM_ARCH" VERSION="$VERSION" work/nfpm package --config nfpm.yaml --packager deb --target "release-out/clipqr_${VERSION}_${ARCH}.deb"
@@ -205,22 +180,26 @@ jobs:
           chmod 755 work/AppDir/AppRun
           curl -fsSL "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${APPIMAGE_ARCH}.AppImage" -o work/appimagetool.AppImage
           chmod 755 work/appimagetool.AppImage
-          ARCH="$APPIMAGE_ARCH" work/appimagetool.AppImage work/AppDir "release-out/ClipQR-${VERSION}-${APPIMAGE_ARCH}.AppImage"
+          APPIMAGE_EXTRACT_AND_RUN=1 ARCH="$APPIMAGE_ARCH" work/appimagetool.AppImage work/AppDir "release-out/ClipQR-${VERSION}-${APPIMAGE_ARCH}.AppImage"
+          cp .nsh/out/ClipQR.tar.gz "release-out/ClipQR-linux-${{ matrix.arch }}.tar.gz"
       - name: Create Apple app archive
-        if: matrix.target == 'macos' || matrix.target == 'ios-simulator'
+        if: matrix.target == 'macos'
         shell: bash
         run: |
           mkdir -p release-out
           bundle="$(find .nsh/out -maxdepth 1 -type d -name '*.app' -print -quit)"
           test -n "$bundle"
-          ditto -c -k --sequesterRsrc --keepParent "$bundle" "release-out/ClipQR-${{ matrix.target }}.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$bundle" "release-out/ClipQR-macos-arm64.zip"
+      - name: Name Windows architecture archive
+        if: matrix.target == 'windows'
+        shell: bash
+        run: |
+          mkdir -p release-out
+          mv .nsh/out/ClipQR.zip "release-out/ClipQR-windows-${{ matrix.arch }}.zip"
       - name: Collect package
         shell: bash
         run: |
           mkdir -p release-out
-          if [[ '${{ matrix.target }}' != 'macos' && '${{ matrix.target }}' != 'ios-simulator' ]]; then
-            find .nsh/out -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*.apk' -o -name '*.aab' \) -print -exec cp {} release-out/ \;
-          fi
           test -n "$(find release-out -type f -print -quit)"
       - uses: actions/upload-artifact@v4
         with:
@@ -243,7 +222,7 @@ jobs:
           TAG: ${{ needs.validate.outputs.tag }}
           VERSION: ${{ needs.validate.outputs.version }}
         run: |
-          NOTES="ClipQR v$VERSION — Native Shell desktop and mobile builds, Linux .deb/.rpm/.AppImage packages, and a React website. QR decoding stays on-device. Linux packages require GTK 4 and WebKitGTK 6; GNOME tray display requires AppIndicator."
+          NOTES="ClipQR v$VERSION — Windows x64/ARM64 ZIPs, macOS Apple silicon ZIP, and Linux x86_64/ARM64 tar.gz, .deb, .rpm, and AppImage packages. QR decoding stays on-device. Linux packages require GTK 4 and WebKitGTK 6; GNOME tray display requires AppIndicator."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" release-assets/* --clobber
             gh release edit "$TAG" --title "ClipQR v$VERSION" --notes "$NOTES"
