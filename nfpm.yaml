@@ -10,20 +10,24 @@ description: Cross-platform QR code reader for clipboard, images, and drag-and-d
 license: MIT
 contents:
   - src: .nsh/out/ClipQR/ClipQR
-    dst: /usr/bin/clipqr
+    dst: /opt/clipqr/ClipQR
     file_info:
       mode: 0755
+  - src: /opt/clipqr/ClipQR
+    dst: /usr/bin/clipqr
+    type: symlink
   - src: .nsh/out/ClipQR/icu.needhelp.clipqr.desktop
     dst: /usr/share/applications/icu.needhelp.clipqr.desktop
   - src: .nsh/out/ClipQR/icu.needhelp.clipqr.png
     dst: /usr/share/icons/hicolor/1024x1024/apps/icu.needhelp.clipqr.png
   - src: .nsh/out/ClipQR/nsh
-    dst: /usr/lib/clipqr/nsh
+    dst: /opt/clipqr/nsh
     type: tree
   - src: tray.svg
     dst: /usr/share/icons/hicolor/scalable/apps/icu.needhelp.clipqr.svg
 scripts:
   postinstall: work/release-package/postinstall.sh
+  postremove: work/release-package/postremove.sh
 overrides:
   deb:
     depends:

@@ -6,6 +6,10 @@ on:
     paths:
       - 'App.tsx'
       - 'App.test.tsx'
+      - 'nfpm.yaml'
+      - '.github/workflows/release.yml'
+      - 'site/public/*.webp'
+      - 'App.test.tsx'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'nsh.json'
@@ -21,6 +25,10 @@ on:
   pull_request:
     paths:
       - 'App.tsx'
+      - 'App.test.tsx'
+      - 'nfpm.yaml'
+      - '.github/workflows/release.yml'
+      - 'site/public/*.webp'
       - 'App.test.tsx'
       - 'Cargo.toml'
       - 'Cargo.lock'

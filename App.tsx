@@ -3,7 +3,7 @@ import { Tray, Window, isAvailable } from "nsh/desktop";
 import { availableLocales, setLocale, t } from "nsh/i18n";
 import appIcon from "./site/public/clipqr-icon.png";
 
-const { Qr } = nativeModule<{ Qr: { decode(bytes: number[]): string | null; decodeFile(path: string): string | null } }>("clipqr/native");
+const { Qr } = nativeModule<{ Qr: { decode(bytes: Uint8Array): string | null; decodeFile(path: string): string | null } }>("clipqr/native");
 
 type State = "idle" | "working" | "ready" | "empty" | "error";
 type Theme = { name: string; mode: "dark" | "light"; page: string; surface: string; raised: string; border: string; text: string; muted: string; accent: string; accentBg: string; accentText: string; accentBorder: string };
@@ -22,23 +22,32 @@ const value = signal("");
 const state = signal<State>("idle");
 const copied = signal(false);
 const dragging = signal(false);
+const autoOpenLinks = signal(false);
+Storage.getItem("autoOpenLinks").then((saved) => autoOpenLinks.set(saved === "true"));
 
 function decodeFileUri(uri: string) {
   const path = decodeURIComponent(new URL(uri).pathname);
   return /^\/[A-Za-z]:\//.test(path) ? path.slice(1) : path;
 }
+async function showResult(text: string) {
+  value.set(text);
+  state.set(text ? "ready" : "empty");
+  if (autoOpenLinks() && isHttpUrl(text)) {
+    try { await openUrl(text); } catch (error) { console.error("Could not open decoded link", error); }
+  }
+}
 async function decodeFile(file: Blob) {
   state.set("working");
   try {
-    const text = Qr.decode(Array.from(new Uint8Array(await file.arrayBuffer()))) ?? "";
-    value.set(text); state.set(text ? "ready" : "empty");
+    const text = Qr.decode(new Uint8Array(await file.arrayBuffer())) ?? "";
+    await showResult(text);
   } catch (error) { console.error(error); value.set(""); state.set("error"); }
 }
 async function decodePath(path: string) {
   state.set("working");
   try {
     const text = Qr.decodeFile(path) ?? "";
-    value.set(text); state.set(text ? "ready" : "empty");
+    await showResult(text);
   } catch (error) { console.error(error); state.set("error"); }
 }
 async function acceptText(text: string) {
@@ -46,22 +55,31 @@ async function acceptText(text: string) {
   if (!trimmed) { value.set(""); state.set("empty"); return; }
   if (trimmed.startsWith("file://")) return decodePath(decodeFileUri(trimmed));
   if (trimmed.startsWith("/") || /^[A-Za-z]:[\\/]/.test(trimmed)) return decodePath(trimmed);
-  value.set(trimmed); state.set("ready");
+  await showResult(trimmed);
 }
 async function readClipboard() {
   state.set("working");
   try {
-    const image = await Clipboard.readImage();
+    let image = null;
+    try { image = await Clipboard.readImage(); } catch (error) { console.warn("Clipboard image read failed; trying files and text", error); }
     if (image) {
-      const encoded = image.url.split(",", 2)[1] ?? "";
-      const bytes = Array.from(atob(encoded), (char) => char.charCodeAt(0));
-      const text = Qr.decode(bytes) ?? "";
-      value.set(text); state.set(text ? "ready" : "empty"); return;
+      try {
+        const response = await fetch(image.url);
+        if (!response.ok) throw new Error(`Could not read clipboard image: ${response.status}`);
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        const text = Qr.decode(bytes) ?? "";
+        if (text) { await showResult(text); return; }
+      } catch (error) { console.warn("Clipboard image decode failed; trying files and text", error); }
     }
-    const files = await Clipboard.readFiles();
-    if (files.length) return decodePath(decodeFileUri(files[0]));
+    let files: string[] = [];
+    try { files = await Clipboard.readFiles(); } catch (error) { console.warn("Clipboard file read failed; trying text", error); }
+    for (const uri of files) {
+      const path = decodeFileUri(uri);
+      const text = Qr.decodeFile(path) ?? "";
+      if (text) { await showResult(text); return; }
+    }
     await acceptText(await Clipboard.readText());
-  } catch (error) { console.error(error); state.set("error"); }
+  } catch (error) { console.error(error); value.set(""); state.set("error"); }
 }
 async function chooseFile() {
   try {
@@ -86,7 +104,7 @@ function App() {
       ] }));
   }
   return (
-    <View onFileDragEnter={() => dragging.set(true)} onFileDragLeave={() => dragging.set(false)} onFileDrop={async ({ uris }) => { dragging.set(false); if (uris[0]) await decodePath(decodeFileUri(uris[0])); }} class="flex-1 bg-[#f3f4f7] p-7 dark:bg-[#202127]">
+  <View onFileDragEnter={() => dragging.set(true)} onFileDragLeave={() => dragging.set(false)} onFileDrop={async ({ uris }) => { dragging.set(false); if (uris[0]) await decodePath(decodeFileUri(uris[0])); }} class="flex-1 bg-[#f3f4f7] p-7 dark:bg-[#202127]">
       <View class="relative z-50 flex-row items-center justify-between">
         <View class="flex-row items-center gap-3"><Image src={appIcon} class="h-[30px] w-[30px]" /><Text class="text-[15px] font-semibold text-[#242630] dark:text-[#f0f1f5]">ClipQR</Text></View>
         <View class="flex-row items-center gap-2">
@@ -113,11 +131,12 @@ function App() {
         <Text class="mt-3 max-w-[420px] text-[14px] leading-relaxed text-[#656b7a] dark:text-[#a8adbb]">{t("app.desc")}</Text>
       </View>
       <View class="rounded-2xl border border-[#d5d8e0] bg-white p-5 dark:border-[#444854] dark:bg-[#292b32]" classList={{ "border-[#526de5] dark:border-[#8ea5ff]": dragging() }}>
-        <View class="flex-row items-center justify-between"><Text class="text-[11px] font-bold tracking-[2px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.inputLabel")}</Text><Text class="text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{dragging() ? t("app.dropIndicator") : "PNG · JPG · WEBP"}</Text></View>
+        <View class="flex-row items-center justify-between"><Text class="text-[11px] font-bold tracking-[2px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.inputLabel")}</Text><Text class="text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{dragging() ? t("app.dropIndicator") : "PNG · JPEG · WEBP · GIF · BMP"}</Text></View>
         <View class="mt-5 flex-row gap-3">
           <View onPress={readClipboard} role="button" class="flex-1 rounded-xl border border-[#526de5] bg-[#e8eaf0] px-4 py-4 transition-colors active:opacity-80 dark:border-[#8ea5ff] dark:bg-[#333640]"><Text class="text-[15px] font-semibold text-[#242630] dark:text-[#f0f1f5]">⌁　{t("readPaste.readClipboard")}</Text><Text class="mt-1 text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.clipboardMeta")}</Text></View>
           <View onPress={chooseFile} role="button" class="flex-1 rounded-xl border border-[#d5d8e0] bg-[#e8eaf0] px-4 py-4 transition-colors active:opacity-80 dark:border-[#444854] dark:bg-[#333640]"><Text class="text-[15px] font-semibold text-[#242630] dark:text-[#f0f1f5]">＋　{t("fileButton.selectFile")}</Text><Text class="mt-1 text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.fileMeta")}</Text></View>
         </View>
+        <View onPress={() => { const next = !autoOpenLinks(); autoOpenLinks.set(next); Storage.setItem("autoOpenLinks", String(next)); }} role="switch" class="mt-4 flex-row items-center justify-between rounded-xl border border-[#d5d8e0] px-4 py-3 dark:border-[#444854]"><View><Text class="text-[12px] font-semibold text-[#242630] dark:text-[#f0f1f5]">{t("app.autoOpenLinks")}</Text><Text class="mt-1 text-[10px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.autoOpenLinksDesc")}</Text></View><Text class="text-[12px] font-bold text-[#526de5] dark:text-[#8ea5ff]">{autoOpenLinks() ? "●" : "○"}</Text></View>
         <View onPress={chooseFile} role="button" class="mt-4 flex-row items-center justify-center gap-3 rounded-xl border border-dashed border-[#d5d8e0] px-4 py-4 dark:border-[#444854]" classList={{ "border-[#526de5] bg-[#e8eaf0] dark:border-[#8ea5ff] dark:bg-[#333640]": dragging() }}><Text class="text-[17px] text-[#526de5] dark:text-[#8ea5ff]">↓</Text><Text class="text-[12px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.dropIndicator")}</Text></View>
         <If when={state() === "working"}><Text class="mt-4 text-[12px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.working")}</Text></If>
         <If when={state() === "empty"}><Text class="mt-4 text-[12px] text-[#526de5] dark:text-[#8ea5ff]">{t("notice.noQr")}</Text></If>

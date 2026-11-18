@@ -7,7 +7,7 @@ export default {
     description: '基于 Native Shell 开发的跨平台桌面应用\n快速读取剪贴板和本地图片中的二维码内容',
     downloadNow: '立即下载',
     learnMore: '了解更多',
-    appScreenshot: 'ClipQR 应用截图'
+    appScreenshot: 'ClipQR 应用截图', mainScreenshot: 'ClipQR 主界面', aboutScreenshot: 'ClipQR 关于界面', mainTitle: '二维码读取界面', mainCaption: '粘贴剪贴板、选择或拖入图片', aboutTitle: '关于 ClipQR', aboutCaption: '版本、作者与项目链接'
     ,localFirst: '本地优先 · 开源 · 跨平台', eyebrow: 'CLIPQR / 桌面工具', titleSuffix: '不绕路，直接完成。', visualLabel: '01 / 实际运行', visualCaption: '快速解析二维码'
   },
   features: {
@@ -22,8 +22,8 @@ export default {
     fastResponseDesc: "选择喜欢的外观，保持清晰舒适的对比度。",
     oneClickCopy: "系统托盘快捷操作",
     oneClickCopyDesc: "从托盘菜单打开 ClipQR、读取剪贴板或查看应用信息。",
-    autoOpenLink: '自动打开链接',
-    autoOpenLinkDesc: '识别到 URL 自动打开浏览器'
+    autoOpenLink: '链接可控打开',
+    autoOpenLinkDesc: '先查看解析结果，再点击打开链接'
   },
   useCases: {
     title: '🎯 使用场景',

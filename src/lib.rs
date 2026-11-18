@@ -45,7 +45,7 @@ fn decode_image(bytes: &[u8]) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::decode_image;
+    use super::{decode_image, Qr};
     use image::{DynamicImage, GrayImage, ImageOutputFormat, Luma};
     use qrcodegen::{QrCode, QrCodeEcc};
     use std::io::Cursor;
@@ -73,10 +73,51 @@ mod tests {
         bytes.into_inner()
     }
 
+    fn qr_bytes(text: &str, format: ImageOutputFormat) -> Vec<u8> {
+        let png = qr_png(text, false);
+        let image = image::load_from_memory(&png).unwrap();
+        let mut bytes = Cursor::new(Vec::new());
+        image.write_to(&mut bytes, format).unwrap();
+        bytes.into_inner()
+    }
+
     #[test]
     fn decodes_standard_qr_image() {
-        let bytes = qr_png("https://clipqr.needhelp.icu", false);
-        assert_eq!(decode_image(&bytes).as_deref(), Some("https://clipqr.needhelp.icu"));
+        let bytes = qr_png("ClipQR plain text", false);
+        assert_eq!(decode_image(&bytes).as_deref(), Some("ClipQR plain text"));
+    }
+
+    #[test]
+    fn decodes_http_and_https_qr_payloads() {
+        for url in ["http://example.com/qr", "https://clipqr.needhelp.icu"] {
+            assert_eq!(decode_image(&qr_png(url, false)).as_deref(), Some(url));
+        }
+    }
+
+    #[test]
+    fn decodes_supported_image_formats() {
+        for format in [ImageOutputFormat::Png, ImageOutputFormat::Jpeg(90), ImageOutputFormat::WebP, ImageOutputFormat::Bmp, ImageOutputFormat::Gif] {
+            let bytes = qr_bytes("format test", format);
+            assert_eq!(decode_image(&bytes).as_deref(), Some("format test"));
+        }
+    }
+
+    #[test]
+    fn decodes_local_image_file() {
+        let path = std::env::temp_dir().join(format!("clipqr-qr-{}.png", std::process::id()));
+        std::fs::write(&path, qr_png("local file test", false)).unwrap();
+        assert_eq!(Qr::decode_file(path.to_string_lossy().to_string()).as_deref(), Some("local file test"));
+        std::fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn decodes_user_reported_qr_image() {
+        let bytes = include_bytes!("../tests/fixtures/user-reported-qr.png");
+        assert_eq!(decode_image(bytes).as_deref(), Some("xingwangzhe.fun"));
+        let image = image::load_from_memory(bytes).unwrap();
+        let mut encoded = Cursor::new(Vec::new());
+        image.write_to(&mut encoded, ImageOutputFormat::Png).unwrap();
+        assert_eq!(decode_image(encoded.get_ref()).as_deref(), Some("xingwangzhe.fun"));
     }
 
     #[test]

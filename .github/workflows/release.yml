@@ -121,6 +121,8 @@ jobs:
       - name: Set up Android SDK
         if: matrix.target == 'android'
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
       - name: Install Android build tools
         if: matrix.target == 'android'
         run: sdkmanager "platforms;android-35" "build-tools;35.0.1" "platform-tools" "ndk;27.2.12479018"
@@ -143,6 +145,10 @@ jobs:
       - name: Package app
         shell: bash
         run: nsh package App.tsx --target '${{ matrix.target }}' --app-version '${{ needs.validate.outputs.version }}' --build 1
+      - name: Strip Linux executable symbols
+        if: matrix.target == 'linux'
+        shell: bash
+        run: strip --strip-all .nsh/out/ClipQR/ClipQR
       - name: Build Debian, RPM, and AppImage packages
         if: matrix.target == 'linux'
         shell: bash
@@ -156,12 +162,22 @@ jobs:
           mkdir -p release-out work/AppDir/usr/share/applications work/AppDir/usr/share/icons/hicolor/1024x1024/apps work/AppDir/opt/clipqr
           mkdir -p work/release-package
           cp .nsh/out/ClipQR/icu.needhelp.clipqr.desktop work/release-package/clipqr.desktop
+          cat > work/release-package/clipqr-launcher <<'EOF'
+          /opt/clipqr/ClipQR
+          EOF
           cat > work/release-package/postinstall.sh <<'EOF'
           #!/bin/sh
           set -e
-          chmod 755 /usr/bin/clipqr
+          install -d /opt/clipqr
           EOF
-          chmod 755 work/release-package/postinstall.sh
+          cat > work/release-package/postremove.sh <<'EOF'
+          #!/bin/sh
+          set -e
+          if [ "$1" = "remove" ]; then
+            rm -f /usr/bin/clipqr
+          fi
+          EOF
+          chmod 755 work/release-package/postinstall.sh work/release-package/postremove.sh
           sudo apt-get update
           sudo apt-get install -y libfuse2
           curl -fsSL "https://github.com/goreleaser/nfpm/releases/download/v2.49.0/nfpm_2.49.0_Linux_${NFPM_ARCH}.tar.gz" -o work/nfpm.tar.gz

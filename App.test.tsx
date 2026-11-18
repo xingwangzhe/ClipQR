@@ -6,6 +6,13 @@ test("shows the QR scanning workspace and privacy copy", async () => {
   expect(app.texts()).toContain("Read the latest image");
   expect(app.texts()).toContain("Browse local images");
   expect(app.texts()).toContain("Drop an image into the window to scan it");
+  expect(app.texts()).toContain("Automatically open detected links");
+});
+
+test("offers a disabled by default automatic link opening preference", async () => {
+  const app = await open("./App.tsx", { locale: "en-US" });
+  expect(app.texts()).toContain("Automatically open detected links");
+  expect(app.texts()).toContain("○");
 });
 
 test("follows the selected system language", async () => {
