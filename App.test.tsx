@@ -21,11 +21,21 @@ test("lets the user change the app language", async () => {
   expect(app.texts()).toContain("解码每个瞬间。");
 });
 
-test("offers the reference color themes", async () => {
+test("offers only Light and Dark app themes", async () => {
   const app = await open("./App.tsx");
   await app.press("Dark⌄");
-  expect(app.texts()).toContain("Catppuccin Mocha");
-  expect(app.texts()).toContain("Kanagawa Wave");
-  await app.press("Dracula");
-  expect(app.texts()).toContain("Dracula⌄");
+  expect(app.texts()).toContain("Light");
+  expect(app.texts()).toContain("Dark");
+  expect(app.texts()).not.toContain("Catppuccin Mocha");
+  await app.press("Light");
+  expect(app.texts()).toContain("Light⌄");
+});
+
+test("shows app information from the About button", async () => {
+  const app = await open("./App.tsx", { locale: "en-US" });
+  await app.press("About ClipQR");
+  expect(app.texts()).toContain("xingwangzhe");
+  expect(app.texts()).toContain("github.com/xingwangzhe/ClipQR ↗");
+  expect(app.texts()).toContain("clipqr.needhelp.icu ↗");
+  expect(app.texts()).toContain("ClipQR · v1.0.0");
 });

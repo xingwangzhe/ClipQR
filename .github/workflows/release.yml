@@ -111,7 +111,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Install Linux build dependencies
         if: startsWith(matrix.runner, 'ubuntu-')
-        run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev
+        run: sudo apt-get update && sudo apt-get install -y clang libgtk-4-dev libwebkitgtk-6.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
       - name: Set up Java
         if: matrix.target == 'android'
         uses: actions/setup-java@v4
@@ -143,6 +143,53 @@ jobs:
       - name: Package app
         shell: bash
         run: nsh package App.tsx --target '${{ matrix.target }}' --app-version '${{ needs.validate.outputs.version }}' --build 1
+      - name: Build Debian, RPM, and AppImage packages
+        if: matrix.target == 'linux'
+        shell: bash
+        env:
+          VERSION: ${{ needs.validate.outputs.version }}
+          ARCH: ${{ matrix.arch == 'x86_64' && 'amd64' || 'arm64' }}
+          APPIMAGE_ARCH: ${{ matrix.arch == 'x86_64' && 'x86_64' || 'aarch64' }}
+          NFPM_ARCH: ${{ matrix.arch == 'x86_64' && 'x86_64' || 'arm64' }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-out work/AppDir/usr/share/applications work/AppDir/usr/share/icons/hicolor/1024x1024/apps work/AppDir/opt/clipqr
+          mkdir -p work/release-package
+          cp .nsh/out/ClipQR/icu.needhelp.clipqr.desktop work/release-package/clipqr.desktop
+          cat > work/release-package/postinstall.sh <<'EOF'
+          #!/bin/sh
+          set -e
+          chmod 755 /usr/bin/clipqr
+          EOF
+          chmod 755 work/release-package/postinstall.sh
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+          curl -fsSL "https://github.com/goreleaser/nfpm/releases/download/v2.49.0/nfpm_2.49.0_Linux_${NFPM_ARCH}.tar.gz" -o work/nfpm.tar.gz
+          tar -xzf work/nfpm.tar.gz -C work nfpm
+          NFPM_ARCH="$NFPM_ARCH" VERSION="$VERSION" work/nfpm package --config nfpm.yaml --packager deb --target "release-out/clipqr_${VERSION}_${ARCH}.deb"
+          NFPM_ARCH="$NFPM_ARCH" VERSION="$VERSION" work/nfpm package --config nfpm.yaml --packager rpm --target "release-out/clipqr-${VERSION}-1.${{ matrix.arch }}.rpm"
+          cp .nsh/out/ClipQR/ClipQR work/AppDir/opt/clipqr/ClipQR
+          cp -a .nsh/out/ClipQR/nsh work/AppDir/opt/clipqr/nsh
+          cp site/public/clipqr-icon.png work/AppDir/icu.needhelp.clipqr.png
+          cat > work/AppDir/icu.needhelp.clipqr.desktop <<'EOF'
+          [Desktop Entry]
+          Type=Application
+          Name=ClipQR
+          Exec=AppRun %U
+          Icon=icu.needhelp.clipqr
+          StartupWMClass=icu.needhelp.clipqr
+          Terminal=false
+          Categories=Utility;
+          EOF
+          cat > work/AppDir/AppRun <<'EOF'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "$0")")"
+          exec "$HERE/opt/clipqr/ClipQR" "$@"
+          EOF
+          chmod 755 work/AppDir/AppRun
+          curl -fsSL "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${APPIMAGE_ARCH}.AppImage" -o work/appimagetool.AppImage
+          chmod 755 work/appimagetool.AppImage
+          ARCH="$APPIMAGE_ARCH" work/appimagetool.AppImage work/AppDir "release-out/ClipQR-${VERSION}-${APPIMAGE_ARCH}.AppImage"
       - name: Create Apple app archive
         if: matrix.target == 'macos' || matrix.target == 'ios-simulator'
         shell: bash
@@ -180,7 +227,13 @@ jobs:
           TAG: ${{ needs.validate.outputs.tag }}
           VERSION: ${{ needs.validate.outputs.version }}
         run: |
-          gh release create "$TAG" release-assets/* \
-            --target "$GITHUB_SHA" \
-            --title "ClipQR v$VERSION" \
-            --notes "ClipQR v$VERSION — Native Shell desktop and mobile builds, with a React website. QR decoding stays on-device."
+          NOTES="ClipQR v$VERSION — Native Shell desktop and mobile builds, Linux .deb/.rpm/.AppImage packages, and a React website. QR decoding stays on-device. Linux packages require GTK 4 and WebKitGTK 6; GNOME tray display requires AppIndicator."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" release-assets/* --clobber
+            gh release edit "$TAG" --title "ClipQR v$VERSION" --notes "$NOTES"
+          else
+            gh release create "$TAG" release-assets/* \
+              --target "$GITHUB_SHA" \
+              --title "ClipQR v$VERSION" \
+              --notes "$NOTES"
+          fi

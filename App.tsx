@@ -1,33 +1,21 @@
-import { Clipboard, Picker, Scroll, Text, View, Image, signal, nativeModule, mount, keymap, openUrl, setColorScheme, locale, Storage } from "nsh";
+import { Clipboard, Picker, Scroll, Text, View, Image, signal, nativeModule, mount, keymap, openUrl, setColorScheme, locale, Storage, effect } from "nsh";
 import { Tray, Window, isAvailable } from "nsh/desktop";
 import { availableLocales, setLocale, t } from "nsh/i18n";
-import trayIcon from "./tray.svg";
+import appIcon from "./site/public/clipqr-icon.png";
 
 const { Qr } = nativeModule<{ Qr: { decode(bytes: number[]): string | null; decodeFile(path: string): string | null } }>("clipqr/native");
 
 type State = "idle" | "working" | "ready" | "empty" | "error";
-type Theme = { name: string; mode: "dark" | "light"; page: string; surface: string; raised: string; border: string; text: string; muted: string; accent: string; accentText: string };
+type Theme = { name: string; mode: "dark" | "light"; page: string; surface: string; raised: string; border: string; text: string; muted: string; accent: string; accentBg: string; accentText: string; accentBorder: string };
 const themes: Theme[] = [
-  { name: "Dark", mode: "dark", page: "#202127", surface: "#292b32", raised: "#333640", border: "#444854", text: "#f0f1f5", muted: "#a8adbb", accent: "#8ea5ff", accentText: "#171923" },
-  { name: "Light", mode: "light", page: "#f3f4f7", surface: "#ffffff", raised: "#e8eaf0", border: "#d5d8e0", text: "#242630", muted: "#656b7a", accent: "#526de5", accentText: "#ffffff" },
-  { name: "Catppuccin Mocha", mode: "dark", page: "#1e1e2e", surface: "#181825", raised: "#313244", border: "#45475a", text: "#cdd6f4", muted: "#a6adc8", accent: "#cba6f7", accentText: "#1e1e2e" },
-  { name: "Catppuccin Macchiato", mode: "dark", page: "#24273a", surface: "#1e2030", raised: "#363a4f", border: "#494d64", text: "#cad3f5", muted: "#a5adcb", accent: "#c6a0f6", accentText: "#24273a" },
-  { name: "Catppuccin Frappé", mode: "dark", page: "#303446", surface: "#292c3c", raised: "#414559", border: "#51576d", text: "#c6d0f5", muted: "#a5adce", accent: "#ca9ee6", accentText: "#303446" },
-  { name: "Catppuccin Latte", mode: "light", page: "#eff1f5", surface: "#e6e9ef", raised: "#dce0e8", border: "#bcc0cc", text: "#4c4f69", muted: "#6c6f85", accent: "#8839ef", accentText: "#ffffff" },
-  { name: "Tokyo Night", mode: "dark", page: "#1a1b26", surface: "#16161e", raised: "#24283b", border: "#3b4261", text: "#c0caf5", muted: "#a9b1d6", accent: "#7aa2f7", accentText: "#1a1b26" },
-  { name: "Dracula", mode: "dark", page: "#282a36", surface: "#21222c", raised: "#343746", border: "#44475a", text: "#f8f8f2", muted: "#bdc0cc", accent: "#bd93f9", accentText: "#282a36" },
-  { name: "Nord", mode: "dark", page: "#2e3440", surface: "#272d38", raised: "#3b4252", border: "#4c566a", text: "#eceff4", muted: "#b7c0ce", accent: "#88c0d0", accentText: "#2e3440" },
-  { name: "Gruvbox Dark", mode: "dark", page: "#282828", surface: "#1d2021", raised: "#3c3836", border: "#504945", text: "#ebdbb2", muted: "#bdae93", accent: "#fabd2f", accentText: "#282828" },
-  { name: "Rosé Pine", mode: "dark", page: "#191724", surface: "#1f1d2e", raised: "#26233a", border: "#403d52", text: "#e0def4", muted: "#908caa", accent: "#c4a7e7", accentText: "#191724" },
-  { name: "Solarized Light", mode: "light", page: "#fdf6e3", surface: "#eee8d5", raised: "#e3ddc8", border: "#d3cbb7", text: "#586e75", muted: "#657b83", accent: "#268bd2", accentText: "#ffffff" },
-  { name: "One Light", mode: "light", page: "#fafafa", surface: "#ffffff", raised: "#f0f0f1", border: "#d3d3d3", text: "#383a42", muted: "#696c77", accent: "#4078f2", accentText: "#ffffff" },
-  { name: "Kanagawa Wave", mode: "dark", page: "#1f1f28", surface: "#16161d", raised: "#2a2a37", border: "#54546d", text: "#dcd7ba", muted: "#a6a69c", accent: "#7e9cd8", accentText: "#1f1f28" },
+  { name: "Dark", mode: "dark", page: "bg-[#202127]", surface: "bg-[#292b32]", raised: "bg-[#333640]", border: "border-[#444854]", text: "text-[#f0f1f5]", muted: "text-[#a8adbb]", accent: "text-[#8ea5ff]", accentBg: "bg-[#8ea5ff]", accentText: "text-[#171923]", accentBorder: "border-[#8ea5ff]" },
+  { name: "Light", mode: "light", page: "bg-[#f3f4f7]", surface: "bg-white", raised: "bg-[#e8eaf0]", border: "border-[#d5d8e0]", text: "text-[#242630]", muted: "text-[#656b7a]", accent: "text-[#526de5]", accentBg: "bg-[#526de5]", accentText: "text-white", accentBorder: "border-[#526de5]" },
 ];
 const languageNames: Record<string, string> = { ar: "العربية", "bn-BD": "বাংলা", "de-DE": "Deutsch", "en-US": "English", "es-ES": "Español", "fr-FR": "Français", "hi-IN": "हिन्दी", "it-IT": "Italiano", "ja-JP": "日本語", "jv-ID": "Basa Jawa", "ko-KR": "한국어", "mr-IN": "मराठी", "pa-IN": "ਪੰਜਾਬੀ", "pt-BR": "Português", "ru-RU": "Русский", "te-IN": "తెలుగు", "tr-TR": "Türkçe", "ur-PK": "اردو", "vi-VN": "Tiếng Việt", "zh-CN": "简体中文", "zh-TW": "繁體中文" };
 const selectedTheme = signal("Dark");
 const themeMenuOpen = signal(false);
 const languageMenuOpen = signal(false);
-const currentTheme = () => themes.find((theme) => theme.name === selectedTheme()) ?? themes[0];
+const aboutOpen = signal(false);
 Storage.getItem("locale").then((saved) => { if (saved && availableLocales().includes(saved)) setLocale(saved); });
 Storage.getItem("theme").then((saved) => { const theme = themes.find((item) => item.name === saved); if (theme) { selectedTheme.set(theme.name); setColorScheme(theme.mode); } });
 const value = signal("");
@@ -89,59 +77,75 @@ function App() {
   if (isAvailable) {
     win?.on("closePress", () => win.hide());
     keymap.bind("mod+shift+v", readClipboard);
-    Tray.set({ icon: trayIcon, tooltip: "ClipQR", onClick: () => win?.focus(), menu: [
-      { label: t("tray.showWindow"), onSelect: () => win?.focus() },
-      { label: t("tray.readClipboard"), onSelect: async () => { await readClipboard(); win?.focus(); } },
-      { type: "separator" },
-      { role: "quit" },
-    ] });
+    effect(() => Tray.set({ icon: appIcon, tooltip: "ClipQR", onClick: () => win?.focus(), menu: [
+        { label: t("tray.showWindow"), onSelect: () => win?.focus() },
+        { label: t("tray.readClipboard"), onSelect: async () => { await readClipboard(); win?.focus(); } },
+        { label: t("app.aboutTitle"), onSelect: () => { win?.focus(); aboutOpen.set(true); } },
+        { type: "separator" },
+        { role: "quit" },
+      ] }));
   }
-  const theme = currentTheme();
   return (
-    <View onFileDragEnter={() => dragging.set(true)} onFileDragLeave={() => dragging.set(false)} onFileDrop={async ({ uris }) => { dragging.set(false); if (uris[0]) await decodePath(decodeFileUri(uris[0])); }} style={{ flex: 1, padding: 28, backgroundColor: theme.page }}>
-      <View class="flex-row items-center justify-between" style={{ zIndex: 50 }}>
-        <View class="flex-row items-center gap-3"><Image src={trayIcon} style={{ width: 30, height: 30 }} /><Text style={{ fontSize: 15, fontWeight: "600", color: theme.text }}>ClipQR</Text></View>
+    <View onFileDragEnter={() => dragging.set(true)} onFileDragLeave={() => dragging.set(false)} onFileDrop={async ({ uris }) => { dragging.set(false); if (uris[0]) await decodePath(decodeFileUri(uris[0])); }} class="flex-1 bg-[#f3f4f7] p-7 dark:bg-[#202127]">
+      <View class="relative z-50 flex-row items-center justify-between">
+        <View class="flex-row items-center gap-3"><Image src={appIcon} class="h-[30px] w-[30px]" /><Text class="text-[15px] font-semibold text-[#242630] dark:text-[#f0f1f5]">ClipQR</Text></View>
         <View class="flex-row items-center gap-2">
+          <View onPress={() => aboutOpen.set(true)} role="button" class="rounded-lg border border-[#d5d8e0] bg-white px-3 py-2 dark:border-[#444854] dark:bg-[#292b32]"><Text class="text-[11px] text-[#242630] dark:text-[#f0f1f5]">{t("app.aboutTitle")}</Text></View>
           <View class="relative">
-            <View onPress={() => { languageMenuOpen.set(!languageMenuOpen()); themeMenuOpen.set(false); }} role="button" class="flex-row items-center gap-2 rounded-lg border px-3 py-2" style={{ backgroundColor: theme.surface, borderColor: theme.border }}><Text style={{ fontSize: 11, color: theme.text }}>{languageNames[locale()] ?? locale()}⌄</Text></View>
-            <If when={languageMenuOpen()}><View class="absolute right-0 top-10 z-20 w-[220px] rounded-xl border p-2" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
-              <Text class="px-2 py-2 text-[10px] font-bold tracking-[2px]" style={{ color: theme.muted }}>{t("app.languageMenu")}</Text>
-              <Scroll style={{ height: 300 }}><View><Each of={availableLocales()}>{(code) => { const language = code(); return <View onPress={() => { setLocale(language); Storage.setItem("locale", language); languageMenuOpen.set(false); }} role="button" class="flex-row items-center justify-between rounded-lg px-2 py-2" style={{ backgroundColor: locale() === language ? theme.raised : "transparent" }}><Text style={{ fontSize: 12, color: theme.text }}>{languageNames[language] ?? language}</Text><If when={locale() === language}><Text style={{ color: theme.accent }}>✓</Text></If></View> }}</Each></View></Scroll>
+            <View onPress={() => { languageMenuOpen.set(!languageMenuOpen()); themeMenuOpen.set(false); }} role="button" class="flex-row items-center gap-2 rounded-lg border border-[#d5d8e0] bg-white px-3 py-2 dark:border-[#444854] dark:bg-[#292b32]"><Text class="text-[11px] text-[#242630] dark:text-[#f0f1f5]">{languageNames[locale()] ?? locale()}⌄</Text></View>
+            <If when={languageMenuOpen()}><View class="absolute right-0 top-10 z-20 w-[220px] rounded-xl border border-[#d5d8e0] bg-white p-2 shadow-xl dark:border-[#444854] dark:bg-[#292b32]">
+              <Text class="px-2 py-2 text-[10px] font-bold tracking-[2px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.languageMenu")}</Text>
+              <Scroll class="h-[300px]"><View><Each of={availableLocales()}>{(code) => { const language = code(); return <View onPress={() => { setLocale(language); Storage.setItem("locale", language); languageMenuOpen.set(false); }} role="button" class="flex-row items-center justify-between rounded-lg px-2 py-2" classList={{ "bg-[#e8eaf0] dark:bg-[#333640]": locale() === language }}><Text class="text-[12px] text-[#242630] dark:text-[#f0f1f5]">{languageNames[language] ?? language}</Text><If when={locale() === language}><Text class="text-[#526de5] dark:text-[#8ea5ff]">✓</Text></If></View> }}</Each></View></Scroll>
             </View></If>
           </View>
           <View class="relative">
-            <View onPress={() => { themeMenuOpen.set(!themeMenuOpen()); languageMenuOpen.set(false); }} role="button" class="flex-row items-center gap-2 rounded-lg border px-3 py-2" style={{ backgroundColor: theme.surface, borderColor: theme.border }}><View style={{ width: 9, height: 9, borderRadius: 99, backgroundColor: theme.accent }} /><Text style={{ fontSize: 11, color: theme.text }}>{selectedTheme()}⌄</Text></View>
-            <If when={themeMenuOpen()}><View class="absolute right-0 top-10 z-20 w-[270px] rounded-xl border p-2" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
-              <Scroll style={{ height: 350 }}><View><Each of={themes}>{(choice) => { const option = choice(); return <View onPress={() => { selectedTheme.set(option.name); setColorScheme(option.mode); Storage.setItem("theme", option.name); themeMenuOpen.set(false); }} role="button" class="flex-row items-center gap-3 rounded-lg px-2 py-2" style={{ backgroundColor: selectedTheme() === option.name ? theme.raised : "transparent" }}><View style={{ width: 28, height: 20, borderRadius: 5, backgroundColor: option.page, borderWidth: 1, borderColor: option.border }}><View style={{ width: 9, height: 9, margin: 4, borderRadius: 99, backgroundColor: option.accent }} /></View><Text style={{ flex: 1, fontSize: 11, color: theme.text }}>{option.name}</Text><If when={selectedTheme() === option.name}><Text style={{ color: theme.accent }}>✓</Text></If></View> }}</Each></View></Scroll>
+            <View onPress={() => { themeMenuOpen.set(!themeMenuOpen()); languageMenuOpen.set(false); }} role="button" class="flex-row items-center gap-2 rounded-lg border border-[#d5d8e0] bg-white px-3 py-2 dark:border-[#444854] dark:bg-[#292b32]"><View class="size-[9px] rounded-full bg-[#526de5] dark:bg-[#8ea5ff]" /><Text class="text-[11px] text-[#242630] dark:text-[#f0f1f5]">{selectedTheme()}⌄</Text></View>
+            <If when={themeMenuOpen()}><View class="absolute right-0 top-10 z-20 w-[160px] rounded-xl border border-[#d5d8e0] bg-white p-2 shadow-xl dark:border-[#444854] dark:bg-[#292b32]">
+              <Scroll class="h-[88px]"><View><Each of={themes}>{(choice) => { const option = choice(); return <View onPress={() => { selectedTheme.set(option.name); setColorScheme(option.mode); Storage.setItem("theme", option.name); themeMenuOpen.set(false); }} role="button" class="flex-row items-center gap-3 rounded-lg px-2 py-2" classList={{ "bg-[#e8eaf0] dark:bg-[#333640]": selectedTheme() === option.name }}><If when={option.name === "Dark"}><View class="size-5 rounded border border-[#444854] bg-[#202127]" /></If><If when={option.name === "Light"}><View class="size-5 rounded border border-[#d5d8e0] bg-white" /></If><Text class="flex-1 text-[11px] text-[#242630] dark:text-[#f0f1f5]">{option.name}</Text><If when={selectedTheme() === option.name}><Text class="text-[#526de5] dark:text-[#8ea5ff]">✓</Text></If></View> }}</Each></View></Scroll>
             </View></If>
           </View>
         </View>
       </View>
       <View class="mt-12 mb-7">
-        <Text class="text-[12px] font-semibold tracking-[2px]" style={{ color: theme.accent }}>{t("app.eyebrow")}</Text>
-        <Text class="mt-3 text-[38px] font-bold leading-tight" style={{ color: theme.text }}>{t("app.title")}</Text>
-        <Text class="text-[38px] font-bold leading-tight" style={{ color: theme.text }}>{t("app.titleAccent")}</Text>
-        <Text class="mt-3 max-w-[420px] text-[14px] leading-relaxed" style={{ color: theme.muted }}>{t("app.desc")}</Text>
+        <Text class="text-[12px] font-semibold tracking-[2px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.eyebrow")}</Text>
+        <Text class="mt-3 text-[38px] font-bold leading-tight text-[#242630] dark:text-[#f0f1f5]">{t("app.title")}</Text>
+        <Text class="text-[38px] font-bold leading-tight text-[#242630] dark:text-[#f0f1f5]">{t("app.titleAccent")}</Text>
+        <Text class="mt-3 max-w-[420px] text-[14px] leading-relaxed text-[#656b7a] dark:text-[#a8adbb]">{t("app.desc")}</Text>
       </View>
-      <View class="rounded-2xl border p-5" style={{ backgroundColor: theme.surface, borderColor: dragging() ? theme.accent : theme.border }}>
-        <View class="flex-row items-center justify-between"><Text class="text-[11px] font-bold tracking-[2px]" style={{ color: theme.accent }}>{t("app.inputLabel")}</Text><Text class="text-[11px]" style={{ color: theme.muted }}>{dragging() ? t("app.dropIndicator") : "PNG · JPG · WEBP"}</Text></View>
+      <View class="rounded-2xl border border-[#d5d8e0] bg-white p-5 dark:border-[#444854] dark:bg-[#292b32]" classList={{ "border-[#526de5] dark:border-[#8ea5ff]": dragging() }}>
+        <View class="flex-row items-center justify-between"><Text class="text-[11px] font-bold tracking-[2px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.inputLabel")}</Text><Text class="text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{dragging() ? t("app.dropIndicator") : "PNG · JPG · WEBP"}</Text></View>
         <View class="mt-5 flex-row gap-3">
-          <View onPress={readClipboard} role="button" class="flex-1 rounded-xl border px-4 py-4 active:opacity-80" style={{ backgroundColor: theme.raised, borderColor: theme.accent }}><Text style={{ fontSize: 15, fontWeight: "600", color: theme.text }}>⌁　{t("readPaste.readClipboard")}</Text><Text class="mt-1 text-[11px]" style={{ color: theme.muted }}>{t("app.clipboardMeta")}</Text></View>
-          <View onPress={chooseFile} role="button" class="flex-1 rounded-xl border px-4 py-4 active:opacity-80" style={{ backgroundColor: theme.raised, borderColor: theme.border }}><Text style={{ fontSize: 15, fontWeight: "600", color: theme.text }}>＋　{t("fileButton.selectFile")}</Text><Text class="mt-1 text-[11px]" style={{ color: theme.muted }}>{t("app.fileMeta")}</Text></View>
+          <View onPress={readClipboard} role="button" class="flex-1 rounded-xl border border-[#526de5] bg-[#e8eaf0] px-4 py-4 transition-colors active:opacity-80 dark:border-[#8ea5ff] dark:bg-[#333640]"><Text class="text-[15px] font-semibold text-[#242630] dark:text-[#f0f1f5]">⌁　{t("readPaste.readClipboard")}</Text><Text class="mt-1 text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.clipboardMeta")}</Text></View>
+          <View onPress={chooseFile} role="button" class="flex-1 rounded-xl border border-[#d5d8e0] bg-[#e8eaf0] px-4 py-4 transition-colors active:opacity-80 dark:border-[#444854] dark:bg-[#333640]"><Text class="text-[15px] font-semibold text-[#242630] dark:text-[#f0f1f5]">＋　{t("fileButton.selectFile")}</Text><Text class="mt-1 text-[11px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.fileMeta")}</Text></View>
         </View>
-        <View onPress={chooseFile} role="button" class="mt-4 flex-row items-center justify-center gap-3 rounded-xl border px-4 py-4" style={{ borderWidth: 1, borderStyle: "dashed", borderColor: dragging() ? theme.accent : theme.border, backgroundColor: dragging() ? theme.raised : "transparent" }}><Text style={{ fontSize: 17, color: theme.accent }}>↓</Text><Text style={{ fontSize: 12, color: theme.muted }}>{t("app.dropIndicator")}</Text></View>
-        <If when={state() === "working"}><Text class="mt-4 text-[12px]" style={{ color: theme.accent }}>{t("app.working")}</Text></If>
-        <If when={state() === "empty"}><Text class="mt-4 text-[12px]" style={{ color: theme.accent }}>{t("notice.noQr")}</Text></If>
-        <If when={state() === "error"}><Text class="mt-4 text-[12px]" style={{ color: "#f38ba8" }}>{t("notice.failed")}</Text></If>
+        <View onPress={chooseFile} role="button" class="mt-4 flex-row items-center justify-center gap-3 rounded-xl border border-dashed border-[#d5d8e0] px-4 py-4 dark:border-[#444854]" classList={{ "border-[#526de5] bg-[#e8eaf0] dark:border-[#8ea5ff] dark:bg-[#333640]": dragging() }}><Text class="text-[17px] text-[#526de5] dark:text-[#8ea5ff]">↓</Text><Text class="text-[12px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.dropIndicator")}</Text></View>
+        <If when={state() === "working"}><Text class="mt-4 text-[12px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.working")}</Text></If>
+        <If when={state() === "empty"}><Text class="mt-4 text-[12px] text-[#526de5] dark:text-[#8ea5ff]">{t("notice.noQr")}</Text></If>
+        <If when={state() === "error"}><Text class="mt-4 text-[12px] text-[#d84a6a] dark:text-[#f38ba8]">{t("notice.failed")}</Text></If>
       </View>
       <If when={state() === "ready"}>
-        <View class="mt-4 rounded-2xl border p-5" style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
-          <View class="flex-row items-center justify-between"><Text class="text-[11px] font-bold tracking-[2px]" style={{ color: theme.accent }}>{t("app.resultLabel")}</Text><View onPress={async () => { await Clipboard.writeText(value()); copied.set(true); }} role="button" class="rounded-lg border px-3 py-2" style={{ borderColor: theme.border }}><Text style={{ fontSize: 12, color: theme.text }}>{copied() ? `${t("app.copied")} ✓` : t("app.copyResult")}</Text></View></View>
-          <View selectable class="mt-4 rounded-lg p-4" style={{ backgroundColor: theme.page }}><Text style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 1.6, color: theme.text }}>{value()}</Text></View>
-          <If when={isHttpUrl(value())}><View onPress={async () => { await openUrl(value()); }} role="button" class="mt-3 self-start rounded-lg px-4 py-2" style={{ backgroundColor: theme.accent }}><Text style={{ fontSize: 12, fontWeight: "600", color: theme.accentText }}>{t("app.externalLink")} ↗</Text></View></If>
+        <View class="mt-4 rounded-2xl border border-[#d5d8e0] bg-white p-5 dark:border-[#444854] dark:bg-[#292b32]">
+          <View class="flex-row items-center justify-between"><Text class="text-[11px] font-bold tracking-[2px] text-[#526de5] dark:text-[#8ea5ff]">{t("app.resultLabel")}</Text><View onPress={async () => { await Clipboard.writeText(value()); copied.set(true); }} role="button" class="rounded-lg border border-[#d5d8e0] px-3 py-2 dark:border-[#444854]"><Text class="text-[12px] text-[#242630] dark:text-[#f0f1f5]">{copied() ? `${t("app.copied")} ✓` : t("app.copyResult")}</Text></View></View>
+          <View selectable class="mt-4 rounded-lg bg-[#f3f4f7] p-4 dark:bg-[#202127]"><Text class="font-mono text-[13px] leading-relaxed text-[#242630] dark:text-[#f0f1f5]">{value()}</Text></View>
+          <If when={isHttpUrl(value())}><View onPress={async () => { await openUrl(value()); }} role="button" class="mt-3 self-start rounded-lg bg-[#526de5] px-4 py-2 dark:bg-[#8ea5ff]"><Text class="text-[12px] font-semibold text-white dark:text-[#171923]">{t("app.externalLink")} ↗</Text></View></If>
         </View>
       </If>
-      <View class="mt-auto flex-row items-center justify-between border-t pt-4" style={{ borderColor: theme.border }}><Text class="text-[10px]" style={{ color: theme.muted }}>{t("app.footer")}</Text><Text class="text-[10px]" style={{ color: theme.muted }}>Ctrl / ⌘ + Shift + V</Text></View>
+      <If when={aboutOpen()}>
+        <View class="absolute inset-0 z-[100] items-center justify-center bg-black/70 p-6">
+          <View class="w-full max-w-[420px] rounded-2xl border border-[#d5d8e0] bg-white p-6 shadow-2xl dark:border-[#444854] dark:bg-[#292b32]">
+            <View class="flex-row items-center justify-between">
+              <View class="flex-row items-center gap-3"><Image src={appIcon} class="h-[38px] w-[38px]" /><View><Text class="text-[19px] font-bold text-[#242630] dark:text-[#f0f1f5]">{t("app.aboutTitle")}</Text><Text class="mt-1 text-[12px] text-[#656b7a] dark:text-[#a8adbb]">ClipQR · {t("app.version")}</Text></View></View>
+              <View onPress={() => aboutOpen.set(false)} role="button" class="rounded-lg border border-[#d5d8e0] px-3 py-2 dark:border-[#444854]"><Text class="text-[12px] text-[#242630] dark:text-[#f0f1f5]">×</Text></View>
+            </View>
+            <View class="mt-5 border-t border-[#d5d8e0] pt-4 dark:border-[#444854]">
+              <View class="flex-row items-center justify-between py-2"><Text class="text-[12px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.author")}</Text><Text class="text-[12px] font-semibold text-[#242630] dark:text-[#f0f1f5]">xingwangzhe</Text></View>
+              <View class="flex-row items-center justify-between py-2"><Text class="text-[12px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.repository")}</Text><View onPress={() => openUrl("https://github.com/xingwangzhe/ClipQR")} role="button"><Text class="text-[12px] text-[#526de5] dark:text-[#8ea5ff]">github.com/xingwangzhe/ClipQR ↗</Text></View></View>
+              <View class="flex-row items-center justify-between py-2"><Text class="text-[12px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.website")}</Text><View onPress={() => openUrl("https://clipqr.needhelp.icu/")} role="button"><Text class="text-[12px] text-[#526de5] dark:text-[#8ea5ff]">clipqr.needhelp.icu ↗</Text></View></View>
+            </View>
+          </View>
+        </View>
+      </If>
+      <View class="mt-auto flex-row items-center justify-between border-t border-[#d5d8e0] pt-4 dark:border-[#444854]"><Text class="text-[10px] text-[#656b7a] dark:text-[#a8adbb]">{t("app.footer")}</Text><Text class="text-[10px] text-[#656b7a] dark:text-[#a8adbb]">Ctrl / ⌘ + Shift + V</Text></View>
     </View>
   );
 }

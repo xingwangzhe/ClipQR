@@ -11,7 +11,8 @@ ClipQR 使用 [Native Shell](https://nsh.dev/zh-CN/) 构建，支持多个桌面
 - 读取剪贴板图片、本地图片和拖入窗口的图片中的二维码。
 - 复制解析结果，或安全地打开 HTTP、HTTPS 链接。
 - 使用系统托盘快速访问；按 `Ctrl/⌘ + Shift + V` 读取剪贴板。
-- 提供 14 种应用主题，默认 Dark；网站固定使用暗色主题。
+- Linux 发行包提供 `.deb`、`.rpm` 和 `.AppImage`，并安装应用图标与桌面启动项；GNOME 托盘需要 AppIndicator 扩展。
+- 应用提供 Light 与 Dark 两种主题，默认 Dark；网站固定使用暗色主题。
 - 默认跟随系统语言，也可从 21 种应用语言中选择。
 - 使用 Native Shell 构建 Linux、macOS、Windows、iOS、Android 和 Web 版本。
 
@@ -48,6 +49,7 @@ bun run package:windows
 - `.github/workflows/nsh-ci.yml` 执行 NSH 类型检查、应用测试、发布构建和语言文件检查。
 - `.github/workflows/vite-ci.yml` 安装网站锁文件依赖，运行 Vite 构建和翻译检查。
 - `.github/workflows/release.yml` 为支持的平台打包，并在推送 `v1.0.0` 等版本标签后发布 GitHub Release。
+- Linux `.deb` 和 `.rpm` 声明 GTK 4 与 WebKitGTK 6 运行依赖；AppImage 也需要系统提供这两个运行库。
 
 ## 项目结构
 

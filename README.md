@@ -11,7 +11,8 @@ Cross-platform QR reader built with [Native Shell](https://nsh.dev/). Decode QR 
 - Read QR codes from clipboard images, local images, and dragged files.
 - Copy decoded text or open safe HTTP and HTTPS links.
 - Keep ClipQR available from the system tray and use `Ctrl/⌘ + Shift + V` to read the clipboard.
-- Choose from 14 color themes. The default is Dark; the website stays dark.
+- Linux releases include `.deb`, `.rpm`, and `.AppImage` packages with desktop launchers and app icons. GNOME tray display requires the AppIndicator extension.
+- Choose Light or Dark in the app. Dark is the default; the website stays dark.
 - Follow the system language or choose from 21 app languages.
 - Build for Linux, macOS, Windows, iOS, Android, and Web with Native Shell.
 
@@ -48,6 +49,7 @@ bun run package:windows
 - `.github/workflows/nsh-ci.yml` runs NSH type checks, app tests, release builds, and locale checks.
 - `.github/workflows/vite-ci.yml` installs the website lockfile, builds with Vite, and checks translations.
 - `.github/workflows/release.yml` packages the supported platforms and publishes GitHub Releases for version tags such as `v1.0.0`.
+- Linux `.deb` and `.rpm` packages declare GTK 4 and WebKitGTK 6 runtime dependencies; the AppImage also relies on those system libraries.
 
 ## Project layout
 
