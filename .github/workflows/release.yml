@@ -116,7 +116,15 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          runtime_root="$(dirname "$(dirname "$(command -v nsh)")")/runtime"
+          nsh_path="$(command -v nsh)"
+          while [ -L "$nsh_path" ]; do
+            target="$(readlink "$nsh_path")"
+            case "$target" in
+              /*) nsh_path="$target" ;;
+              *) nsh_path="$(dirname "$nsh_path")/$target" ;;
+            esac
+          done
+          runtime_root="$(dirname "$(dirname "$nsh_path")")/runtime"
           test -d "$runtime_root"
           echo "NSH_RUNTIME=$runtime_root" >> "$GITHUB_ENV"
       - name: Use bundled NSH runtime (Windows)
